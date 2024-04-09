@@ -9,6 +9,7 @@ Project Requirements:
 * networking to send and receive game data 
 
 Networking Requirements
+
 The game must accommodate at least two (2) human players who will play against, or in cooperation
 with, each other. The game must run on three (3) or more separate machines: one server, and n-1 client
 players (where n is the number of machines).
