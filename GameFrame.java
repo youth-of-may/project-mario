@@ -57,7 +57,11 @@ public class GameFrame implements KeyListener {
     }
 
     @Override
-    public void keyReleased(KeyEvent e) {
-        // Not needed
+    public void keyReleased(KeyEvent e)
+    {
+        if (e.getKeyCode() == KeyEvent.VK_RIGHT)
+        {
+            canvas.getObject(2).changeState();
+        }
     }
 }

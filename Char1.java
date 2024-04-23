@@ -8,23 +8,24 @@ public class Char1 implements Objects
 {
     int x;
     int y;
-    int width = 30;
-    int height = 30;
-    boolean walk;
-    String imagePath1;
-    String imagePath2;
-    BufferedImage myPicture1;
-    BufferedImage myPicture2;
+    int width = 50;
+    int height = 75;
+    boolean walking;
+    String imagePath;
+    BufferedImage spriteSheet;
+    int numFrames;
+    int currentFrame;
+
 
     public Char1(int x, int y) throws IOException
     {
         this.x = x;
         this.y = y;
-        walk = false;
-        imagePath1 = "GameSpritesCHAR1.png";
-        myPicture1 = ImageIO.read(new File(imagePath1));
-        imagePath2 = "CHAR1_WALK.png";
-        myPicture2 = ImageIO.read(new File(imagePath2));
+        walking = false;
+        imagePath = "GameSprites/Sprite_Sheet.png";
+        spriteSheet = ImageIO.read(new File(imagePath));
+        numFrames = 9;
+        currentFrame = 0;
     }
 
     @Override
@@ -38,11 +39,16 @@ public class Char1 implements Objects
         // Use better interpolation for image scaling
         g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
 
-        if(walk)
-            g2d.drawImage(myPicture2, x, y, null);
-
-        else if(!walk)
-            g2d.drawImage(myPicture1, x, y, null);
+        if (walking)
+        {
+            BufferedImage currentFrameImage = spriteSheet.getSubimage(currentFrame * width, 0, width, height);
+            g2d.drawImage(currentFrameImage, x, y, null);
+            currentFrame = (currentFrame + 1) % numFrames;
+        }
+        else {
+            // Draw standing frame
+            g2d.drawImage(spriteSheet.getSubimage(0, 0, width, height), x, y, null);
+        }
     }
 
     public void adjustX(int distance)
@@ -58,10 +64,10 @@ public class Char1 implements Objects
     @Override
     public void changeState()
     {
-        if(walk)
-            walk = false;
+        if(walking)
+            walking = false;
 
-        else if(!walk)
-            walk = true;
+        else if(!walking)
+            walking = true;
     }
 }
