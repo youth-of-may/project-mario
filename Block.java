@@ -11,7 +11,6 @@ public class Block implements Objects {
     int height = 30;
     boolean walk;
     String imagePath1;
-    String imagePath2;
     BufferedImage myPicture1;
     BufferedImage myPicture2;
 
@@ -22,8 +21,6 @@ public class Block implements Objects {
         walk = false;
         imagePath1 = "GameSprites/BLOCK.png";
         myPicture1 = ImageIO.read(new File(imagePath1));
-        imagePath2 = "GameSprites/BLUE_BLOCK.png";
-        myPicture2 = ImageIO.read(new File(imagePath2));
     }
 
     @Override
@@ -36,12 +33,7 @@ public class Block implements Objects {
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         // Use better interpolation for image scaling
         g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-
-        if(walk)
-            g2d.drawImage(myPicture2, x, y, null);
-
-        else if(!walk)
-            g2d.drawImage(myPicture1, x, y, null);
+        g2d.drawImage(myPicture1, x, y, null);
     }
 
     public void adjustX(int distance)
@@ -50,12 +42,36 @@ public class Block implements Objects {
     }
 
     @Override
-    public boolean getState() {
+    public void adjustY()
+    {
+
+    }
+
+    @Override
+    public int returnX()
+    {
+        return x;
+    }
+
+    @Override
+    public int returnY()
+    {
+        return y;
+    }
+
+    @Override
+    public boolean returnWalk
+            () {
         return false;
     }
 
     @Override
-    public void changeState()
+    public boolean returnJump() {
+        return false;
+    }
+
+    @Override
+    public void changeWalk()
     {
         if(walk)
             walk = false;
@@ -63,5 +79,23 @@ public class Block implements Objects {
         else if(!walk)
             walk = true;
     }
+
+    @Override
+    public void changeJump() {
+
+    }
+
+    @Override
+    public void changeDirection() {
+
+    }
+
+    @Override
+    public boolean returnDirection()
+    {
+        return false;
+    }
+
+
 
 }

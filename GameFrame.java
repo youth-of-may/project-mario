@@ -3,7 +3,8 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.IOException;
 
-public class GameFrame implements KeyListener {
+public class GameFrame implements KeyListener
+{
 
     private JFrame frame;
     private int width;
@@ -19,10 +20,6 @@ public class GameFrame implements KeyListener {
         canvas = new GameCanvas();
     }
 
-    /**
-     * setGUI adds all the components in the JFrame and sets the appropriate settings
-     * in order for the JFrame to be seen in the GUI.
-     */
     public void setGUI() {
         frame.setSize(width, height);
         frame.setTitle("Final Project - Giron - Olegario");
@@ -48,12 +45,43 @@ public class GameFrame implements KeyListener {
     @Override
     public void keyPressed(KeyEvent e)
     {
-        if (e.getKeyCode() == KeyEvent.VK_RIGHT)
+        if(!canvas.getObject(2).returnDirection())
         {
-            canvas.getObject(2).adjustX(-1);
-            canvas.getObject(2).changeState();
-            canvas.repaint();
+            if (e.getKeyCode() == KeyEvent.VK_LEFT)
+            {
+                if (canvas.getObject(2).returnWalk())
+                {
+                    canvas.getObject(2).adjustX(-2);
+                    canvas.repaint();
+                }
+                else
+                {
+                    canvas.getObject(2).changeWalk();
+                    canvas.getObject(2).adjustX(-2);
+                    canvas.repaint();
+                }
+            }
+            if (e.getKeyCode() == KeyEvent.VK_RIGHT)
+                canvas.getObject(2).changeDirection();
         }
+        else
+        {
+            if (e.getKeyCode() == KeyEvent.VK_RIGHT)
+            {
+                if (canvas.getObject(2).returnWalk()) {
+                    canvas.getObject(2).adjustX(2);
+                    canvas.repaint();
+                } else
+                {
+                    canvas.getObject(2).changeWalk();
+                    canvas.getObject(2).adjustX(2);
+                    canvas.repaint();
+                }
+            }
+            if (e.getKeyCode() == KeyEvent.VK_LEFT)
+                canvas.getObject(2).changeDirection();
+        }
+
     }
 
     @Override
@@ -61,7 +89,7 @@ public class GameFrame implements KeyListener {
     {
         if (e.getKeyCode() == KeyEvent.VK_RIGHT)
         {
-            canvas.getObject(2).changeState();
+            canvas.getObject(2).changeWalk();
         }
     }
 }

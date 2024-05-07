@@ -24,13 +24,13 @@ import java.util.*;
 public class GameCanvas extends JComponent
 {
     ArrayList<Objects> objects;
+    BG bg = new BG(0, 0)
 
 
     public GameCanvas() throws IOException
     {
         setPreferredSize(new Dimension(800, 600));
         objects = new ArrayList<>();
-        objects.add(new BG(0, 0));
         objects.add(new Block(50, 50));
         objects.add(new Char1(550, 50));
 
@@ -45,6 +45,7 @@ public class GameCanvas extends JComponent
                 RenderingHints.KEY_ANTIALIASING,
                 RenderingHints.VALUE_ANTIALIAS_ON);
         g2d.setRenderingHints(rh);
+        bg.draw(g2d);
         for(int i = 0; i < objects.size(); i++)
         {
             objects.get(i).draw(g2d);

@@ -4,6 +4,14 @@ public interface Objects
 {
     void draw(Graphics2D g2d);
     void adjustX(int distance);
-    boolean getState();
-    void changeState();
+    void adjustY();
+    int returnX();
+    int returnY();
+    boolean returnWalk();
+    boolean returnJump();
+    void changeWalk();
+    void changeJump();
+    void changeDirection();
+    boolean returnDirection();
+
 }

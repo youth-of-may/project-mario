@@ -4,19 +4,18 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
-public class BG
+public class Sleep
 {
-    int x;
-    int y;
+    int x, y, width, height;
     String imagePath1;
-    String imagePath2;
     BufferedImage myPicture1;
-    BufferedImage myPicture2;
 
-    public BG(int x, int y) throws IOException {
+    public Sleep(int x, int y) throws IOException {
         this.x = x;
         this.y = y;
-        imagePath1 = "GameSprites/BG.png";
+        width = 75;
+        height = 75;
+        imagePath1 = "GameSprites/SLEEP.png";
         myPicture1 = ImageIO.read(new File(imagePath1));
     }
 
@@ -32,8 +31,4 @@ public class BG
         g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
         g2d.drawImage(myPicture1, x, y, null);
     }
-
-
-
-
 }
