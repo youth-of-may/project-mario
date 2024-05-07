@@ -9,9 +9,7 @@ public class BG
     int x;
     int y;
     String imagePath1;
-    String imagePath2;
     BufferedImage myPicture1;
-    BufferedImage myPicture2;
 
     public BG(int x, int y) throws IOException {
         this.x = x;

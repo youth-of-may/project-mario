@@ -21,24 +21,24 @@ import java.awt.*;
 import java.io.IOException;
 import java.util.*;
 
-public class GameCanvas extends JComponent
-{
+public class GameCanvas extends JComponent {
     ArrayList<Objects> objects;
-    BG bg = new BG(0, 0)
+    ArrayList<Block> blocks;
+    BG bg = new BG(0, 0);
 
 
-    public GameCanvas() throws IOException
-    {
+    public GameCanvas() throws IOException {
         setPreferredSize(new Dimension(800, 600));
         objects = new ArrayList<>();
-        objects.add(new Block(50, 50));
+        blocks = new ArrayList<>();
+        blocks.add(new Block(50, 50));
         objects.add(new Char1(550, 50));
+        checkCollisions();
 
     }
 
     @Override
-    public void paintComponent(Graphics g)
-    {
+    public void paintComponent(Graphics g) {
         Graphics2D g2d = (Graphics2D) g;
 
         RenderingHints rh = new RenderingHints(
@@ -46,14 +46,26 @@ public class GameCanvas extends JComponent
                 RenderingHints.VALUE_ANTIALIAS_ON);
         g2d.setRenderingHints(rh);
         bg.draw(g2d);
-        for(int i = 0; i < objects.size(); i++)
-        {
+        for (int i = 0; i < objects.size(); i++) {
             objects.get(i).draw(g2d);
+        }
+        for (int i = 0; i < blocks.size(); i++) {
+            blocks.get(i).draw(g2d);
         }
     }
 
-    public Objects getObject(int index)
-    {
+    public Objects getObject(int index) {
         return objects.get(index);
+    }
+
+    public void checkCollisions()
+    {
+        Char1 character = (Char1) objects.get(0); // Assuming the character is always the first object in the list
+        for (Block block : blocks) {
+            if (character.blockCollision(block))
+            {
+                character.doCollision(blocks);
+            }
+        }
     }
 }

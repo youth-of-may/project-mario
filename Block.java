@@ -36,9 +36,9 @@ public class Block implements Objects {
         g2d.drawImage(myPicture1, x, y, null);
     }
 
-    public void adjustX(int distance)
+    public void adjustX()
     {
-        x += distance; // Adjust x by the given distance
+        x += 0; // Adjust x by the given distance
     }
 
     @Override
@@ -66,11 +66,6 @@ public class Block implements Objects {
     }
 
     @Override
-    public boolean returnJump() {
-        return false;
-    }
-
-    @Override
     public void changeWalk()
     {
         if(walk)
@@ -81,21 +76,14 @@ public class Block implements Objects {
     }
 
     @Override
-    public void changeJump() {
-
-    }
-
-    @Override
     public void changeDirection() {
 
     }
 
     @Override
-    public boolean returnDirection()
-    {
+    public boolean returnDirection() {
         return false;
     }
-
 
 
 }

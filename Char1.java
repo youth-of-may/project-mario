@@ -4,11 +4,12 @@ import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class Char1 implements Objects
 {
     int x, y, xSpeed, ySpeed, width, height, numFrames, currentFrame;
-    boolean walking, jumping, falling;
+    boolean walking, jumping, direction, falling;
     String imagePathL, imagePathR;
     BufferedImage spriteSheetL, spriteSheetR;
     SpriteThread spriteThread;
@@ -16,11 +17,11 @@ public class Char1 implements Objects
     public Char1(int x, int y) throws IOException {
         this.x = x;
         this.y = y;
+        xSpeed = 2;
         width = 50;
         height = 75;
         walking = true;
         jumping = false;
-        direction = true;
         imagePathL = "GameSprites/Sprite_SheetL.png";
         spriteSheetL = ImageIO.read(new File(imagePathL));
         imagePathR = "GameSprites/Sprite_SheetR.png";
@@ -42,32 +43,21 @@ public class Char1 implements Objects
         // Use better interpolation for image scaling
         g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
 
-        if(!direction)
-        {
-            if (walking) {
-                BufferedImage currentFrameImage = spriteSheetL.getSubimage(currentFrame * width, 0, width, height);
-                g2d.drawImage(currentFrameImage, x, y, null);
-            } else {
-                // Draw standing frame
-                g2d.drawImage(spriteSheetL.getSubimage(0, 0, width, height), x, y, null);
-            }
-        }
-        else
-        {
-            if (walking)
-            {
-                BufferedImage currentFrameImage = spriteSheetR.getSubimage(currentFrame * width, 0, width, height);
-                g2d.drawImage(currentFrameImage, x, y, null);
-            } else {
-                // Draw standing frame
-                g2d.drawImage(spriteSheetR.getSubimage(0, 0, width, height), x, y, null);
-            }
+        if (walking) {
+            BufferedImage currentFrameImage = spriteSheetR.getSubimage(currentFrame * width, 0, width, height);
+            g2d.drawImage(currentFrameImage, x, y, null);
+        } else {
+            // Draw standing frame
+            g2d.drawImage(spriteSheetR.getSubimage(0, 0, width, height), x, y, null);
         }
     }
 
-    public void adjustX(int distance)
+    public void adjustX()
     {
-        x += distance;
+        if(direction)
+            x += xSpeed;
+        else
+            x -= xSpeed;
     }
 
     @Override
@@ -94,20 +84,10 @@ public class Char1 implements Objects
         return walking;
     }
 
-    @Override
-    public boolean returnJump()
-    {
-        return false;
-    }
 
     @Override
     public void changeWalk() {
         walking = !walking;
-    }
-
-    @Override
-    public void changeJump() {
-
     }
 
     @Override
@@ -130,6 +110,15 @@ public class Char1 implements Objects
         boolean horizontalCollision = this.x < other.x + other.width && this.x + this.width > other.x;
         boolean verticalCollision = this.y < other.y + other.height && this.y + this.height > other.y;
         return horizontalCollision && verticalCollision;
+    }
+
+    public void doCollision(ArrayList<Block> blocks)
+    {
+        for(Block other : blocks)
+        {
+            if (blockCollision(other))
+                xSpeed = 0;
+        }
     }
 
     public boolean sleepCollision(Sleep other)

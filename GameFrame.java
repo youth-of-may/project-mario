@@ -45,41 +45,41 @@ public class GameFrame implements KeyListener
     @Override
     public void keyPressed(KeyEvent e)
     {
-        if(!canvas.getObject(2).returnDirection())
+        if(!canvas.getObject(0).returnDirection())
         {
             if (e.getKeyCode() == KeyEvent.VK_LEFT)
             {
-                if (canvas.getObject(2).returnWalk())
+                if (canvas.getObject(0).returnWalk())
                 {
-                    canvas.getObject(2).adjustX(-2);
+                    canvas.getObject(0).adjustX();
                     canvas.repaint();
                 }
                 else
                 {
-                    canvas.getObject(2).changeWalk();
-                    canvas.getObject(2).adjustX(-2);
+                    canvas.getObject(0).changeWalk();
+                    canvas.getObject(0).adjustX();
                     canvas.repaint();
                 }
             }
             if (e.getKeyCode() == KeyEvent.VK_RIGHT)
-                canvas.getObject(2).changeDirection();
+                canvas.getObject(0).changeDirection();
         }
         else
         {
             if (e.getKeyCode() == KeyEvent.VK_RIGHT)
             {
-                if (canvas.getObject(2).returnWalk()) {
-                    canvas.getObject(2).adjustX(2);
+                if (canvas.getObject(0).returnWalk()) {
+                    canvas.getObject(0).adjustX();
                     canvas.repaint();
                 } else
                 {
-                    canvas.getObject(2).changeWalk();
-                    canvas.getObject(2).adjustX(2);
+                    canvas.getObject(0).changeWalk();
+                    canvas.getObject(0).adjustX();
                     canvas.repaint();
                 }
             }
             if (e.getKeyCode() == KeyEvent.VK_LEFT)
-                canvas.getObject(2).changeDirection();
+                canvas.getObject(0).changeDirection();
         }
 
     }
@@ -89,7 +89,7 @@ public class GameFrame implements KeyListener
     {
         if (e.getKeyCode() == KeyEvent.VK_RIGHT)
         {
-            canvas.getObject(2).changeWalk();
+            canvas.getObject(0).changeWalk();
         }
     }
 }
