@@ -17,7 +17,10 @@ that has been clearly noted with a proper citation in the comments
 of my program.
 */
 import javax.swing.*;
+import javax.swing.Timer;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.util.*;
 
@@ -32,9 +35,8 @@ public class GameCanvas extends JComponent {
         objects = new ArrayList<>();
         blocks = new ArrayList<>();
         blocks.add(new Block(50, 50));
-        objects.add(new Char1(550, 50));
-        checkCollisions();
-
+        objects.add(new Player(550, 50));
+        collisionChecker();
     }
 
     @Override
@@ -54,17 +56,29 @@ public class GameCanvas extends JComponent {
         }
     }
 
-    public Objects getObject(int index) {
+    public void collisionChecker()
+    {
+        Timer animationTimer = new Timer(20, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                checkCollisions();
+            }
+        });
+        animationTimer.start();
+    }
+    public Objects getObject(int index)
+    {
         return objects.get(index);
     }
 
     public void checkCollisions()
     {
-        Char1 character = (Char1) objects.get(0); // Assuming the character is always the first object in the list
-        for (Block block : blocks) {
+        Player character = (Player) objects.get(0); // Assuming the character is always the first object in the list
+        for (Block block : blocks)
+        {
             if (character.blockCollision(block))
             {
-                character.doCollision(blocks);
+                character.doBlockCollision(blocks);
             }
         }
     }

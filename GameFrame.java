@@ -45,17 +45,19 @@ public class GameFrame implements KeyListener
     @Override
     public void keyPressed(KeyEvent e)
     {
-        if(!canvas.getObject(0).returnDirection())
-        {
-            if (e.getKeyCode() == KeyEvent.VK_LEFT)
-            {
-                if (canvas.getObject(0).returnWalk())
-                {
+        if (e.getKeyCode() == KeyEvent.VK_UP) {
+            Player character = (Player) canvas.getObject(0);
+            if (!character.returnJump() && !character.returnWalk()) {
+                character.changeJump();
+            }
+        }
+
+        if (!canvas.getObject(0).returnDirection()) {
+            if (e.getKeyCode() == KeyEvent.VK_LEFT) {
+                if (canvas.getObject(0).returnWalk()) {
                     canvas.getObject(0).adjustX();
                     canvas.repaint();
-                }
-                else
-                {
+                } else {
                     canvas.getObject(0).changeWalk();
                     canvas.getObject(0).adjustX();
                     canvas.repaint();
@@ -63,16 +65,12 @@ public class GameFrame implements KeyListener
             }
             if (e.getKeyCode() == KeyEvent.VK_RIGHT)
                 canvas.getObject(0).changeDirection();
-        }
-        else
-        {
-            if (e.getKeyCode() == KeyEvent.VK_RIGHT)
-            {
+        } else {
+            if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
                 if (canvas.getObject(0).returnWalk()) {
                     canvas.getObject(0).adjustX();
                     canvas.repaint();
-                } else
-                {
+                } else {
                     canvas.getObject(0).changeWalk();
                     canvas.getObject(0).adjustX();
                     canvas.repaint();

@@ -85,5 +85,15 @@ public class Block implements Objects {
         return false;
     }
 
+    @Override
+    public boolean returnJump() {
+        return false;
+    }
+
+    @Override
+    public void changeJump() {
+
+    }
+
 
 }

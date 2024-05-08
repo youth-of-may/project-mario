@@ -11,5 +11,7 @@ public interface Objects
     void changeWalk();
     void changeDirection();
     boolean returnDirection();
+    boolean returnJump();
+    void changeJump();
 
 }
