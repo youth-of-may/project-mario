@@ -7,25 +7,27 @@ import java.util.ArrayList;
 
 public class Player implements Objects {
     int x, y, xSpeed, ySpeed, width, height, coins;
-    String direction, imagePathL, imagePathR;
+    String name, direction, imagePath;
     boolean starUp, hurt, shellUp;
-    BufferedImage spriteSheetL, spriteSheetR;
+    BufferedImage spriteSheet;
 
-    public Player(int x, int y) throws IOException {
+    public Player(int x, int y, String name) throws IOException {
         this.x = x;
         this.y = y;
+        this.name = name;
         xSpeed = 2;
         ySpeed = 2;
         width = 50;
-        height = 75;
+        height = 50;
         coins = 100;
         starUp = false;
         hurt = false;
         direction = "up";
-        imagePathL = "GameSprites/Sprite_SheetL.png";
-        spriteSheetL = ImageIO.read(new File(imagePathL));
-        imagePathR = "GameSprites/Sprite_SheetR.png";
-        spriteSheetR = ImageIO.read(new File(imagePathR));
+        if(name.equals("mario"))
+            imagePath = "GameSprites/PLAYER1_SPRITESHEET.png";
+        else if(name.equals("peach"))
+            imagePath = "GameSprites/PLAYER2_SPRITESHEET.png";
+        spriteSheet = ImageIO.read(new File(imagePath));
     }
 
     @Override
@@ -39,7 +41,7 @@ public class Player implements Objects {
         // Use better interpolation for image scaling
         g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
         // Draw standing frame
-        g2d.drawImage(spriteSheetR.getSubimage(0, 0, width, height), x, y, null);
+        g2d.drawImage(spriteSheet.getSubimage(0, 0, width, height), x, y, null);
     }
 
     public void adjustX() {

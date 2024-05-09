@@ -85,6 +85,7 @@ public class Enemy implements Objects
 
     private class EnemyAnimation
     {
-        
+
+
     }
 }

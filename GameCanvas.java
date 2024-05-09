@@ -48,8 +48,8 @@ public class GameCanvas extends JComponent
         sleeps = new ArrayList<>();
         enemies = new ArrayList<>();
         blocks.add(new Block(50, 50));
-        players.add(player1 = new Player(150, 50));
-        players.add(player2 = new Player(300, 50));
+        players.add(player1 = new Player(150, 50, "mario"));
+        players.add(player2 = new Player(300, 50, "peach"));
         sleeps.add(new Sleep(200, 200));
         enemies.add(new Enemy(100, 300));
         stars.add(new Star(150, 300));
