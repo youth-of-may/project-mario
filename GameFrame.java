@@ -74,6 +74,28 @@ public class GameFrame implements KeyListener {
             canvas.repaint();
             updateCoinLabel();
         }
+        else if (e.getKeyCode() == KeyEvent.VK_A) {
+            player2.changeDirection("left");
+            player2.adjustX();
+            canvas.repaint();
+            updateCoinLabel();
+        }
+        else if (e.getKeyCode() == KeyEvent.VK_S) {
+            player2.changeDirection("down");
+            player2.adjustY();
+            canvas.repaint();
+            updateCoinLabel();
+        } else if (e.getKeyCode() == KeyEvent.VK_D) {
+            player2.changeDirection("right");
+            player2.adjustX();
+            canvas.repaint();
+            updateCoinLabel();
+        } else if (e.getKeyCode() == KeyEvent.VK_W) {
+            player2.changeDirection("up");
+            player2.adjustY();
+            canvas.repaint();
+            updateCoinLabel();
+        }
     }
 
     @Override

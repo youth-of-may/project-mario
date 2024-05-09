@@ -4,23 +4,26 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
-public class Block implements Objects {
-    int x, y, width, height;
+public class Enemy implements Objects
+{
+    int x, y, xSpeed, ySpeed, width, height;
     String imagePath1;
     BufferedImage myPicture1;
 
-    public Block(int x, int y) throws IOException
-    {
+    public Enemy(int x, int y) throws IOException {
         this.x = x;
         this.y = y;
-        this.width = 30;
-        this.height = 30;
-        imagePath1 = "GameSprites/BLOCK.png";
+        xSpeed = 2;
+        ySpeed = 2;
+        width = 40;
+        height = 40;
+        imagePath1 = "GameSprites/ENEMY.png";
         myPicture1 = ImageIO.read(new File(imagePath1));
     }
 
     @Override
-    public void draw(Graphics2D g2d) {
+    public void draw(Graphics2D g2d)
+    {
         RenderingHints rh = new RenderingHints(
                 RenderingHints.KEY_ANTIALIASING,
                 RenderingHints.VALUE_ANTIALIAS_ON);
@@ -32,27 +35,27 @@ public class Block implements Objects {
         g2d.drawImage(myPicture1, x, y, null);
     }
 
+
+    @Override
     public void adjustX()
     {
-        x += 0; // Adjust x by the given distance
+        x += xSpeed;
     }
 
     @Override
     public void adjustY()
     {
-
+        y += ySpeed;
     }
 
     @Override
-    public int returnX()
-    {
-        return x;
+    public int returnX() {
+        return 0;
     }
 
     @Override
-    public int returnY()
-    {
-        return y;
+    public int returnY() {
+        return 0;
     }
 
     @Override
@@ -66,14 +69,12 @@ public class Block implements Objects {
     }
 
     @Override
-    public String returnDirection()
-    {
+    public String returnDirection() {
         return null;
     }
 
     @Override
-    public void changeDirection(String direction)
-    {
+    public void changeDirection(String direction) {
 
     }
 
@@ -82,5 +83,8 @@ public class Block implements Objects {
         return 0;
     }
 
-
+    private class EnemyAnimation
+    {
+        
+    }
 }

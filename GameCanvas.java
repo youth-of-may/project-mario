@@ -34,6 +34,8 @@ public class GameCanvas extends JComponent
     ArrayList<Block> blocks;
     ArrayList<SilverCoin> sc;
     ArrayList<Star> stars;
+    ArrayList<Sleep> sleeps;
+    ArrayList<Enemy> enemies;
     BG bg = new BG(0, 0);
 
 
@@ -43,10 +45,14 @@ public class GameCanvas extends JComponent
         blocks = new ArrayList<>();
         sc = new ArrayList<>();
         stars = new ArrayList<>();
+        sleeps = new ArrayList<>();
+        enemies = new ArrayList<>();
         blocks.add(new Block(50, 50));
         players.add(player1 = new Player(150, 50));
         players.add(player2 = new Player(300, 50));
-        stars.add(new Star(200, 200));
+        sleeps.add(new Sleep(200, 200));
+        enemies.add(new Enemy(100, 300));
+        stars.add(new Star(150, 300));
         coinGenerator = new CoinGenerator();
         //coinGenerator.start();
         collisionChecker();
@@ -72,6 +78,12 @@ public class GameCanvas extends JComponent
         }
         for (Star star : stars) {
             star.draw(g2d);
+        }
+        for (Sleep sleep : sleeps) {
+            sleep.draw(g2d);
+        }
+        for (Enemy enemy : enemies) {
+            enemy.draw(g2d);
         }
     }
 
@@ -119,6 +131,24 @@ public class GameCanvas extends JComponent
                 if (player.starCollision(star)) {
                     player.doStarCollision(star);
                     iterator2.remove();
+                }
+            }
+
+            Iterator<Sleep> iterator3 = sleeps.iterator();
+            while (iterator3.hasNext()) {
+                Sleep sleep = iterator3.next();
+                if (player.sleepCollision(sleep))
+                {
+                    player.doSleepCollision(sleep,
+                            players);
+                    iterator3.remove();
+                }
+            }
+
+            for (Enemy enemy: enemies) {
+                if (player.enemyCollision(enemy))
+                {
+                    player.doEnemyCollision(enemy);
                 }
             }
         }

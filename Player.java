@@ -6,9 +6,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class Player implements Objects {
-    int x, y, xSpeed, ySpeed, width, height, coins, numFrames, currentFrame;
+    int x, y, xSpeed, ySpeed, width, height, coins;
     String direction, imagePathL, imagePathR;
-    boolean invincible, hurt;
+    boolean starUp, hurt, shellUp;
     BufferedImage spriteSheetL, spriteSheetR;
 
     public Player(int x, int y) throws IOException {
@@ -19,7 +19,7 @@ public class Player implements Objects {
         width = 50;
         height = 75;
         coins = 100;
-        invincible = false;
+        starUp = false;
         hurt = false;
         direction = "up";
         imagePathL = "GameSprites/Sprite_SheetL.png";
@@ -107,29 +107,72 @@ public class Player implements Objects {
     {
         if (other != this && playerCollision(other))
         {
-            if(other.invincible && coins > 0)
+            if(other.starUp && coins > 0 && !hurt)
             {
+                hurt = true;
                 coins -= 3;
                 if (coins < 0)
                 {
                     coins = 0;
                 }
                 other.coins += 3;
+                HurtTimer hurtTimer = new HurtTimer(this);
+                hurtTimer.start();
+
             }
 
-            if(invincible && other.coins > 0)
+            if(starUp && other.coins > 0 && !other.hurt)
 
             {
+                other.hurt = true;
                 coins += 3;
                 other.coins -= 3;
                 if (other.coins < 0)
                 {
                     other.coins = 0;
                 }
+                HurtTimer hurtTimer = new HurtTimer(other);
+                hurtTimer.start();
             }
         }
     }
+    public boolean enemyCollision(Enemy other)
+    {
+        boolean horizontalCollision = this.x < other.x + other.width && this.x + this.width > other.x;
+        boolean verticalCollision = this.y < other.y + other.height && this.y + this.height > other.y;
+        return horizontalCollision && verticalCollision;
+    }
 
+    public void doEnemyCollision(Enemy other)
+    {
+        if (enemyCollision(other) && !hurt)
+        {
+            coins -= 1;
+            hurt = true;
+            HurtTimer hurtTimer = new HurtTimer(this);
+            hurtTimer.start();
+        }
+    }
+    public boolean sleepCollision(Sleep other)
+    {
+        boolean horizontalCollision = this.x < other.x + other.width && this.x + this.width > other.x;
+        boolean verticalCollision = this.y < other.y + other.height && this.y + this.height > other.y;
+        return horizontalCollision && verticalCollision;
+    }
+
+    public void doSleepCollision(Sleep other, ArrayList<Player> players)
+    {
+        if(sleepCollision(other)) {
+            for (Player player : players) {
+                if (player != this) {
+                    player.xSpeed = 0;
+                    player.ySpeed = 0;
+                    SleepTimer sleepTimer = new SleepTimer(players);
+                    sleepTimer.start();
+                }
+            }
+        }
+    }
     public boolean starCollision(Star other)
     {
         boolean horizontalCollision = this.x < other.x + other.width && this.x + this.width > other.x;
@@ -141,7 +184,7 @@ public class Player implements Objects {
     {
         if (starCollision(other))
         {
-            invincible = true;
+            starUp = true;
             StarTimer starTimer = new StarTimer();
             starTimer.start();
         }
@@ -223,11 +266,49 @@ public class Player implements Objects {
         public void run() {
             try {
                 Thread.sleep(10000);
-                invincible = false;
+                starUp = false;
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }
     }
 
+    private class HurtTimer extends Thread {
+        private Player player;
+
+        public HurtTimer(Player player)
+        {
+            this.player = player;
+        }
+        @Override
+        public void run() {
+            try {
+                Thread.sleep(10000);
+                player.hurt = false;
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private class SleepTimer extends Thread {
+        private ArrayList<Player> players;
+        public SleepTimer(ArrayList<Player> players) {
+            this.players = players;
+        }
+        @Override
+        public void run() {
+            try {
+                Thread.sleep(10000);
+                for (Player player : players) {
+                    player.xSpeed = 2;
+                    player.ySpeed = 2;
+                }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 }
+
+
