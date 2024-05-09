@@ -99,6 +99,11 @@ public class GameCanvas extends JComponent {
         }
     }
 
+
+    public class coinGenerator
+    {
+        
+    }
     public void coinGenerator()
     {
         Timer coinTimer = new Timer(5000, new ActionListener() {
