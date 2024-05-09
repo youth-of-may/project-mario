@@ -6,29 +6,26 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class Player implements Objects {
-    int x, y, xSpeed, ySpeed, width, height, numFrames, currentFrame;
-    boolean walking, jumping, direction, falling;
+    int x, y, xSpeed, ySpeed, width, height, coins, numFrames, currentFrame;
+    String direction;
     String imagePathL, imagePathR;
     BufferedImage spriteSheetL, spriteSheetR;
-    SpriteThread spriteThread;
 
     public Player(int x, int y) throws IOException {
         this.x = x;
         this.y = y;
         xSpeed = 2;
+        ySpeed = 2;
         width = 50;
         height = 75;
-        walking = true;
-        jumping = false;
-        falling = true;
+        coins = 0;
+        direction = "up";
         imagePathL = "GameSprites/Sprite_SheetL.png";
         spriteSheetL = ImageIO.read(new File(imagePathL));
         imagePathR = "GameSprites/Sprite_SheetR.png";
         spriteSheetR = ImageIO.read(new File(imagePathR));
         numFrames = 8;
         currentFrame = 0;
-        spriteThread = new SpriteThread();
-        spriteThread.start();
     }
 
     @Override
@@ -41,29 +38,24 @@ public class Player implements Objects {
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         // Use better interpolation for image scaling
         g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-
-        if (walking) {
-            BufferedImage currentFrameImage = spriteSheetR.getSubimage(currentFrame * width, 0, width, height);
-            g2d.drawImage(currentFrameImage, x, y, null);
-        } else {
-            // Draw standing frame
-            g2d.drawImage(spriteSheetR.getSubimage(0, 0, width, height), x, y, null);
-        }
+        // Draw standing frame
+        g2d.drawImage(spriteSheetR.getSubimage(0, 0, width, height), x, y, null);
     }
 
     public void adjustX() {
-        if (direction)
+        if (direction.equals("right"))
             x += xSpeed;
-        else
+        else if (direction.equals("left"))
             x -= xSpeed;
     }
 
     @Override
-    public void adjustY()
-    {
-
+    public void adjustY() {
+        if (direction.equals("down"))
+            y += ySpeed;
+        else if (direction.equals("up"))
+            y -= ySpeed;
     }
-
 
     @Override
     public int returnX() {
@@ -76,41 +68,25 @@ public class Player implements Objects {
     }
 
     @Override
-    public boolean returnWalk() {
-        return walking;
-    }
-
-
-    @Override
-    public void changeWalk() {
-        walking = !walking;
+    public String returnStatus() {
+        return null;
     }
 
     @Override
-    public void changeDirection() {
-        if (direction)
-            direction = false;
-        else
-            direction = true;
+    public void changeStatus() {
+
     }
 
     @Override
-    public boolean returnDirection() {
+    public void changeDirection(String direction) {
+        this.direction = direction;
+    }
+
+    @Override
+    public String returnDirection() {
         return direction;
     }
 
-    @Override
-    public boolean returnJump() {
-        return jumping;
-    }
-
-    @Override
-    public void changeJump() {
-        if (jumping)
-            jumping = false;
-        if (!jumping)
-            jumping = true;
-    }
 
     public boolean blockCollision(Block other) {
         boolean horizontalCollision = this.x < other.x + other.width && this.x + this.width > other.x;
@@ -119,42 +95,70 @@ public class Player implements Objects {
     }
 
     public void doBlockCollision(ArrayList<Block> blocks) {
+        boolean collided = false;
         for (Block other : blocks) {
+            boolean horizontalCollision = false;
+            boolean verticalCollision = false;
+
             if (blockCollision(other)) {
-                // Collision detected, adjust character's position and speed
-                xSpeed = 0;
+                collided = true;
+                int dx = x + width / 2 - (other.x + other.width / 2);
+                int dy = y + height / 2 - (other.y + other.height / 2);
 
-                // Adjust character's position to prevent overlap
-                if (x < other.x) {
-                    x = other.x - width; // Move character to the left of the block
+                if (Math.abs(dx) > Math.abs(dy)) {
+                    horizontalCollision = true;
                 } else {
-                    x = other.x + other.width; // Move character to the right of the block
+                    verticalCollision = true;
                 }
-            }
-        }
-        xSpeed = 2; // Adjust this value to match the original xSpeed
-    }
 
-
-
-
-    class SpriteThread extends Thread
-    {
-        @Override
-        public void run() {
-            while (true) {
-                try {
-                    if (walking)
-                    {
-                        currentFrame = (currentFrame + 1) % numFrames;
+                if (horizontalCollision) {
+                    if (x < other.x) {
+                        x = other.x - width;
+                    } else {
+                        x = other.x + other.width;
                     }
-                    else
-                        currentFrame = 0;
-                    Thread.sleep(50);
-                } catch (InterruptedException f) {
-                    f.printStackTrace();
+                    xSpeed = 0;
+                } else {
+                    xSpeed = 2;
                 }
+
+                if (verticalCollision) {
+                    if (y < other.y) {
+                        y = other.y - height;
+                    } else {
+                        y = other.y + other.height;
+                    }
+                    ySpeed = 0;
+                } else {
+                    ySpeed = 2;
+                }
+
+                collided = false;
+
+                break;
+            }
+        }
+
+        if (!collided) {
+            xSpeed = 2;
+            ySpeed = 2;
+        }
+    }
+
+    public boolean scCollision(SilverCoin other)
+    {
+        boolean horizontalCollision = this.x < other.x + other.width && this.x + this.width > other.x;
+        boolean verticalCollision = this.y < other.y + other.height && this.y + this.height > other.y;
+        return horizontalCollision && verticalCollision;
+    }
+
+    public void doSCCollision(ArrayList<SilverCoin> sc) {
+        for (SilverCoin other: sc) {
+            if (scCollision(other)) {
+                coins += 1;
             }
         }
     }
+
+
 }

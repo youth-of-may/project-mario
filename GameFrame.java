@@ -11,13 +11,16 @@ public class GameFrame implements KeyListener
     private int height;
     private JTextArea area;
     private GameCanvas canvas;
+    private Player character;
 
-    public GameFrame(int width, int height) throws IOException {
+    public GameFrame(int width, int height) throws IOException
+    {
         this.width = width;
         this.height = height;
         frame = new JFrame();
         area = new JTextArea();
         canvas = new GameCanvas();
+        character = (Player) canvas.getObject(0);
     }
 
     public void setGUI() {
@@ -45,49 +48,36 @@ public class GameFrame implements KeyListener
     @Override
     public void keyPressed(KeyEvent e)
     {
-        if (e.getKeyCode() == KeyEvent.VK_UP) {
-            Player character = (Player) canvas.getObject(0);
-            if (!character.returnJump() && !character.returnWalk()) {
-                character.changeJump();
-            }
+        if (e.getKeyCode() == KeyEvent.VK_UP)
+        {
+            character.changeDirection("up");
+            character.adjustY();
+            canvas.repaint();
         }
 
-        if (!canvas.getObject(0).returnDirection()) {
-            if (e.getKeyCode() == KeyEvent.VK_LEFT) {
-                if (canvas.getObject(0).returnWalk()) {
-                    canvas.getObject(0).adjustX();
-                    canvas.repaint();
-                } else {
-                    canvas.getObject(0).changeWalk();
-                    canvas.getObject(0).adjustX();
-                    canvas.repaint();
-                }
-            }
-            if (e.getKeyCode() == KeyEvent.VK_RIGHT)
-                canvas.getObject(0).changeDirection();
-        } else {
-            if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
-                if (canvas.getObject(0).returnWalk()) {
-                    canvas.getObject(0).adjustX();
-                    canvas.repaint();
-                } else {
-                    canvas.getObject(0).changeWalk();
-                    canvas.getObject(0).adjustX();
-                    canvas.repaint();
-                }
-            }
-            if (e.getKeyCode() == KeyEvent.VK_LEFT)
-                canvas.getObject(0).changeDirection();
+        else if (e.getKeyCode() == KeyEvent.VK_DOWN)
+        {
+            character.changeDirection("down");
+            character.adjustY();
+            canvas.repaint();
         }
 
+        else if (e.getKeyCode() == KeyEvent.VK_RIGHT)
+        {
+            character.changeDirection("right");
+            character.adjustX();
+            canvas.repaint();
+        }
+
+        else if (e.getKeyCode() == KeyEvent.VK_LEFT)
+        {
+            character.changeDirection("left");
+            character.adjustX();
+            canvas.repaint();
+        }
     }
 
     @Override
-    public void keyReleased(KeyEvent e)
-    {
-        if (e.getKeyCode() == KeyEvent.VK_RIGHT)
-        {
-            canvas.getObject(0).changeWalk();
-        }
+    public void keyReleased(KeyEvent e) {
     }
 }

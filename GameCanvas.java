@@ -27,6 +27,7 @@ import java.util.*;
 public class GameCanvas extends JComponent {
     ArrayList<Objects> objects;
     ArrayList<Block> blocks;
+    ArrayList<SilverCoin> sc;
     BG bg = new BG(0, 0);
 
 
@@ -34,9 +35,12 @@ public class GameCanvas extends JComponent {
         setPreferredSize(new Dimension(800, 600));
         objects = new ArrayList<>();
         blocks = new ArrayList<>();
+        sc = new ArrayList<>();
         blocks.add(new Block(50, 50));
-        objects.add(new Player(550, 50));
+        objects.add(new Player(150, 50));
+        objects.add(new Sleep(300, 300));
         collisionChecker();
+        coinGenerator();
     }
 
     @Override
@@ -53,6 +57,9 @@ public class GameCanvas extends JComponent {
         }
         for (int i = 0; i < blocks.size(); i++) {
             blocks.get(i).draw(g2d);
+        }
+        for (int i = 0; i < sc.size(); i++) {
+            sc.get(i).draw(g2d);
         }
     }
 
@@ -73,7 +80,7 @@ public class GameCanvas extends JComponent {
 
     public void checkCollisions()
     {
-        Player character = (Player) objects.get(0); // Assuming the character is always the first object in the list
+        Player character = (Player) objects.get(0);
         for (Block block : blocks)
         {
             if (character.blockCollision(block))
@@ -81,5 +88,39 @@ public class GameCanvas extends JComponent {
                 character.doBlockCollision(blocks);
             }
         }
+
+        Iterator<SilverCoin> iterator = sc.iterator();
+        while (iterator.hasNext()) {
+            SilverCoin coin = iterator.next();
+            if (character.scCollision(coin)) {
+                // Remove the coin from the list
+                iterator.remove();
+            }
+        }
     }
+
+    public void coinGenerator()
+    {
+        Timer coinTimer = new Timer(5000, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                sc.clear();
+
+                for (int i = 0; i < 10; i++) {
+                    int coinX = (int) (Math.random() * (getWidth() - 50));
+                    int coinY = (int) (Math.random() * (getHeight() - 50));
+
+                    try {
+                        sc.add(new SilverCoin(coinX, coinY));
+                    } catch (IOException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                }
+
+                repaint();
+            }
+        });
+        coinTimer.start();
+    }
+
 }

@@ -4,7 +4,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
-public class Star
+public class Star implements Objects
 {
     int x, y, width, height;
     String imagePath1;
@@ -30,5 +30,45 @@ public class Star
         // Use better interpolation for image scaling
         g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
         g2d.drawImage(myPicture1, x, y, null);
+    }
+
+    @Override
+    public void adjustX() {
+
+    }
+
+    @Override
+    public void adjustY() {
+
+    }
+
+    @Override
+    public int returnX() {
+        return 0;
+    }
+
+    @Override
+    public int returnY() {
+        return 0;
+    }
+
+    @Override
+    public String returnStatus() {
+        return null;
+    }
+
+    @Override
+    public void changeStatus() {
+
+    }
+
+    @Override
+    public String returnDirection() {
+        return null;
+    }
+
+    @Override
+    public void changeDirection(String direction) {
+
     }
 }

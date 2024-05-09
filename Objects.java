@@ -7,11 +7,9 @@ public interface Objects
     void adjustY();
     int returnX();
     int returnY();
-    boolean returnWalk();
-    void changeWalk();
-    void changeDirection();
-    boolean returnDirection();
-    boolean returnJump();
-    void changeJump();
+    String returnStatus();
+    void changeStatus();
+    String returnDirection();
+    void changeDirection(String direction);
 
 }
