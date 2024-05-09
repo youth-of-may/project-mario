@@ -7,8 +7,8 @@ import java.util.ArrayList;
 
 public class Player implements Objects {
     int x, y, xSpeed, ySpeed, width, height, coins, numFrames, currentFrame;
-    String direction;
-    String imagePathL, imagePathR;
+    String direction, imagePathL, imagePathR;
+    boolean invincible, hurt;
     BufferedImage spriteSheetL, spriteSheetR;
 
     public Player(int x, int y) throws IOException {
@@ -18,14 +18,14 @@ public class Player implements Objects {
         ySpeed = 2;
         width = 50;
         height = 75;
-        coins = 0;
+        coins = 100;
+        invincible = false;
+        hurt = false;
         direction = "up";
         imagePathL = "GameSprites/Sprite_SheetL.png";
         spriteSheetL = ImageIO.read(new File(imagePathL));
         imagePathR = "GameSprites/Sprite_SheetR.png";
         spriteSheetR = ImageIO.read(new File(imagePathR));
-        numFrames = 8;
-        currentFrame = 0;
     }
 
     @Override
@@ -83,10 +83,69 @@ public class Player implements Objects {
     }
 
     @Override
+    public int returnCoins()
+    {
+        return coins;
+    }
+
+    @Override
     public String returnDirection() {
         return direction;
     }
 
+
+
+
+    public boolean playerCollision(Player other)
+    {
+        boolean horizontalCollision = this.x < other.x + other.width && this.x + this.width > other.x;
+        boolean verticalCollision = this.y < other.y + other.height && this.y + this.height > other.y;
+        return horizontalCollision && verticalCollision;
+    }
+
+    public void doPlayerCollision(Player other)
+    {
+        if (other != this && playerCollision(other))
+        {
+            if(other.invincible && coins > 0)
+            {
+                coins -= 3;
+                if (coins < 0)
+                {
+                    coins = 0;
+                }
+                other.coins += 3;
+            }
+
+            if(invincible && other.coins > 0)
+
+            {
+                coins += 3;
+                other.coins -= 3;
+                if (other.coins < 0)
+                {
+                    other.coins = 0;
+                }
+            }
+        }
+    }
+
+    public boolean starCollision(Star other)
+    {
+        boolean horizontalCollision = this.x < other.x + other.width && this.x + this.width > other.x;
+        boolean verticalCollision = this.y < other.y + other.height && this.y + this.height > other.y;
+        return horizontalCollision && verticalCollision;
+    }
+
+    public void doStarCollision(Star other)
+    {
+        if (starCollision(other))
+        {
+            invincible = true;
+            StarTimer starTimer = new StarTimer();
+            starTimer.start();
+        }
+    }
 
     public boolean blockCollision(Block other) {
         boolean horizontalCollision = this.x < other.x + other.width && this.x + this.width > other.x;
@@ -152,13 +211,23 @@ public class Player implements Objects {
         return horizontalCollision && verticalCollision;
     }
 
-    public void doSCCollision(ArrayList<SilverCoin> sc) {
-        for (SilverCoin other: sc) {
-            if (scCollision(other)) {
-                coins += 1;
-            }
+    public void doSCCollision(SilverCoin other)
+    {
+        if (scCollision(other)) {
+            coins += 1;
         }
     }
 
+    private class StarTimer extends Thread {
+        @Override
+        public void run() {
+            try {
+                Thread.sleep(10000);
+                invincible = false;
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 
 }

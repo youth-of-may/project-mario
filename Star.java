@@ -71,4 +71,9 @@ public class Star implements Objects
     public void changeDirection(String direction) {
 
     }
+
+    @Override
+    public int returnCoins() {
+        return 0;
+    }
 }

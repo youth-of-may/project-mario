@@ -81,7 +81,10 @@ public class Block implements Objects {
 
     }
 
-
+    @Override
+    public int returnCoins() {
+        return 0;
+    }
 
 
 }

@@ -11,5 +11,6 @@ public interface Objects
     void changeStatus();
     String returnDirection();
     void changeDirection(String direction);
+    int returnCoins();
 
 }

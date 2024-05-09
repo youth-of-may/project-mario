@@ -33,7 +33,8 @@ public class Sleep implements Objects
     }
 
     @Override
-    public void adjustX() {
+    public void adjustX()
+    {
 
     }
 
@@ -71,6 +72,11 @@ public class Sleep implements Objects
     @Override
     public void changeDirection(String direction) {
 
+    }
+
+    @Override
+    public int returnCoins() {
+        return 0;
     }
 
     ;
