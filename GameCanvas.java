@@ -192,9 +192,7 @@ public class GameCanvas extends JComponent
 
             for (Player.ShellProjectile shellProjectile : player.shellProjectiles)
             {
-                if (player.projectileCollision(shellProjectile)) {
-                    player.doProjectileCollision(shellProjectile, players);
-                }
+                player.doProjectileCollision(player.shellProjectiles, players);
             }
         }
     }

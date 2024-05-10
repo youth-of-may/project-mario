@@ -230,14 +230,21 @@ public class Player implements Objects {
         return horizontalCollision && verticalCollision;
     }
 
-    public void doProjectileCollision(ShellProjectile other, ArrayList<Player> players)
+    public void doProjectileCollision(ArrayList<ShellProjectile> shells, ArrayList<Player> players)
     {
+        // Iterate over each player
         for (Player player : players)
         {
-            if (player.projectileCollision(other))
+            // Check collision with each shell projectile
+            for (ShellProjectile shell : shells)
             {
-                System.out.println("lol");
-                player.coins -= 3;
+                if (player.projectileCollision(shell))
+                {
+                    // Perform collision handling
+                    System.out.println("Collision detected with player: " + player.name);
+                    player.coins -= 3; // Deduct coins from the player
+                    // Additional handling if needed
+                }
             }
         }
     }
