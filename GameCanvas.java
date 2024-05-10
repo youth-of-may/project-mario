@@ -56,8 +56,8 @@ public class GameCanvas extends JComponent
             blocks.add(new Block(i * 25, 475));
         }
 
-        players.add(player1 = new Player(150, 50, "mario"));
-        players.add(player2 = new Player(300, 50, "peach"));
+        //players.add(player1 = new Player(150, 50, "mario"));
+        //players.add(player2 = new Player(300, 50, "peach"));
         sleeps.add(new Sleep(200, 200));
         shells.add(new Shell(250, 250));
         enemies.add(new Enemy(100, 300));
@@ -65,6 +65,11 @@ public class GameCanvas extends JComponent
         coinGenerator = new CoinGenerator();
         coinGenerator.start();
         collisionChecker();
+    }
+    public void addPlayers(ArrayList<Player> p) {
+        //add players from GameFrame
+        players = p;
+        //System.out.println("Successfully added.");
     }
 
     @Override

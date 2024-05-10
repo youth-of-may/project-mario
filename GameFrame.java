@@ -2,29 +2,91 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.net.*;
 
 public class GameFrame implements KeyListener {
 
     private JFrame frame;
+    private int playerID;
     private int width;
     private int height;
     private JLabel coin1, coin2;
     private GameCanvas canvas;
+    private ArrayList<Player> players;
     private Player player1;
     private Player player2;
+    private Socket socket;
+    
 
     public GameFrame(int width, int height) throws IOException {
         this.width = width;
         this.height = height;
         frame = new JFrame();
         canvas = new GameCanvas();
+
+        //for networking stuff
+        players = new ArrayList<>();
+        playerID = 0;
+
+        /*
         player1 = canvas.getPlayer(0);
         player2 = canvas.getPlayer(1);
+        coin1 = new JLabel("Coins: " + player1.coins);
+        coin2 = new JLabel("Coins: " + player2.coins); */
+    }
+
+    private void createSprites() throws IOException{
+        /*
+         * This is for creating players based on the player id/player number
+         */
+        if (playerID == 1) {
+            player1 = new Player(150, 50, "mario");
+            player2 = new Player(300, 50, "peach");
+
+        }
+        else {
+            player1 = new Player(300, 50, "peach");
+            player2 = new Player(150, 50, "mario");
+            
+        }
+        players.add(player1);
+        players.add(player2);
+        System.out.println("Players created");
+    }
+    private void setUpCoins() {
+        /*
+         * This is for setting up the coins 
+         */
         coin1 = new JLabel("Coins: " + player1.coins);
         coin2 = new JLabel("Coins: " + player2.coins);
     }
 
-    public void setGUI() {
+    private void connectToServer() {
+        /*
+         * Connecting to server
+         */
+        try {
+            socket = new Socket("localhost", 55555);
+            DataInputStream in = new DataInputStream(socket.getInputStream());
+            DataOutputStream out = new DataOutputStream(socket.getOutputStream());
+            playerID = in.readInt(); //tells you if you're the first one to connect or what
+            System.out.println("You are player#" + playerID);
+
+        }
+        catch(IOException e) {
+            System.out.println("IOException in connectToServer");
+
+        }
+    }
+
+    public void setGUI() throws IOException{
+        connectToServer();
+        createSprites();
+        setUpCoins();
+        canvas.addPlayers(players);
         frame.setSize(width, height);
         frame.setTitle("Final Project - Giron - Olegario");
         frame.setLayout(null);
