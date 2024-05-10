@@ -4,19 +4,19 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
-public class SilverCoin implements Objects
+public class GoldCoin implements Objects
 {
 
     int x, y, width, height;
     String imagePath1;
     BufferedImage myPicture1;
 
-    public SilverCoin(int x, int y) throws IOException {
+    public GoldCoin(int x, int y) throws IOException {
         this.x = x;
         this.y = y;
         width = 20;
         height = 20;
-        imagePath1 = "GameSprites/SILVERCOIN.png";
+        imagePath1 = "GameSprites/GOLDCOIN.png";
         myPicture1 = ImageIO.read(new File(imagePath1));
     }
 

@@ -13,8 +13,8 @@ public class Sleep implements Objects
     public Sleep(int x, int y) throws IOException {
         this.x = x;
         this.y = y;
-        width = 75;
-        height = 75;
+        width = 35;
+        height = 35;
         imagePath1 = "GameSprites/SLEEP.png";
         myPicture1 = ImageIO.read(new File(imagePath1));
     }

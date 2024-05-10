@@ -28,6 +28,7 @@ public class GameFrame implements KeyListener {
         frame.setSize(width, height);
         frame.setTitle("Final Project - Giron - Olegario");
         frame.setLayout(null);
+        canvas.setPreferredSize(new Dimension(800, 600));
         frame.add(coin1);
         frame.add(coin2);
         frame.add(canvas);
@@ -57,7 +58,7 @@ public class GameFrame implements KeyListener {
             player1.changeDirection("up");
             player1.adjustY();
             canvas.repaint();
-            updateCoinLabel(); // Update coin label after player movement
+            updateCoinLabel();
         } else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
             player1.changeDirection("down");
             player1.adjustY();
@@ -93,6 +94,15 @@ public class GameFrame implements KeyListener {
         } else if (e.getKeyCode() == KeyEvent.VK_W) {
             player2.changeDirection("up");
             player2.adjustY();
+            canvas.repaint();
+            updateCoinLabel();
+        }
+        else if (e.getKeyCode() == KeyEvent.VK_SPACE) {
+            try {
+                player1.shootShell();
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
             canvas.repaint();
             updateCoinLabel();
         }

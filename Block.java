@@ -13,8 +13,8 @@ public class Block implements Objects {
     {
         this.x = x;
         this.y = y;
-        this.width = 30;
-        this.height = 30;
+        this.width = 25;
+        this.height = 25;
         imagePath1 = "GameSprites/BLOCK.png";
         myPicture1 = ImageIO.read(new File(imagePath1));
     }
