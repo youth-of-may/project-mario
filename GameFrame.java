@@ -19,6 +19,8 @@ public class GameFrame implements KeyListener {
     private Player player1;
     private Player player2;
     private Socket socket;
+    private ReadFromServer rfs;
+    private WriteToServer wts;
     
 
     public GameFrame(int width, int height) throws IOException {
@@ -74,7 +76,8 @@ public class GameFrame implements KeyListener {
             DataOutputStream out = new DataOutputStream(socket.getOutputStream());
             playerID = in.readInt(); //tells you if you're the first one to connect or what
             System.out.println("You are player#" + playerID);
-
+            rfs = new ReadFromServer(in);
+            wts = new WriteToServer(out);
         }
         catch(IOException e) {
             System.out.println("IOException in connectToServer");
@@ -173,5 +176,73 @@ public class GameFrame implements KeyListener {
     @Override
     public void keyReleased(KeyEvent e) {
     }
+    private class ReadFromServer implements Runnable {
+        private DataInputStream dataIn;
+        public ReadFromServer(DataInputStream d) {
+            dataIn = d;
+            System.out.println("RFS Runnable Created");
+
+        }
+        public void run() {
+            try {
+            while (true) {
+                if (player2 != null) {
+                    int p2x = dataIn.readInt();
+                    int p2y = dataIn.readInt();
+                    System.out.println(p2x);
+                    player2.setX(p2x);
+                    player2.setY(p2y);
+                }
+            }
+        }
+        catch(IOException e) {
+            System.out.println("IOexception in readFromServer");
+        }
+        }
+        /*
+        public void waitForStartMsg() {
+            try {
+                String startMsg = dataIn.readUTF();
+                    System.out.println("Message from server: " + startMsg);
+                    Thread read = new Thread(rfs);
+                    read.start();
+                    Thread write = new Thread(wts);
+                    write.start();
+            }
+            catch(IOException e) {
+    
+            }
+        } */
+    }
+    private class WriteToServer implements Runnable {
+        private DataOutputStream dataOut;
+        public WriteToServer(DataOutputStream d) {
+            dataOut = d;
+            System.out.println("WTS Runnable Created");
+
+        }
+        public void run() {
+            try {
+            while (true) {
+                if (player1!= null) {
+                    dataOut.writeInt(player1.returnX());
+                    dataOut.writeInt(player1.returnY());
+                    dataOut.flush();
+                }
+                try {
+                    Thread.sleep(25);
+                }
+                catch(InterruptedException e) {
+                    System.out.println("Interrupted Exception from WTS run");
+                }
+            }
+        }
+        catch(IOException e) {
+            System.out.println("IOexception in WriteToserver");
+        }
+        }
+    }
 }
+
+
 

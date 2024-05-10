@@ -57,7 +57,12 @@ public class Player implements Objects {
         else if (direction.equals("left"))
             x -= xSpeed;
     }
-
+    public void setX(int posX) {
+        x = posX;
+    }
+    public void setY(int posY) {
+        y = posY;
+    }
     @Override
     public void adjustY() {
         if (direction.equals("down"))
