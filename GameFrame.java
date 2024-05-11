@@ -10,6 +10,7 @@ import java.net.*;
 public class GameFrame implements KeyListener {
 
     private JFrame frame;
+    private int p2x, p2y;
     private int playerID;
     private int width;
     private int height;
@@ -47,12 +48,15 @@ public class GameFrame implements KeyListener {
         if (playerID == 1) {
             player1 = new Player(150, 50, "mario");
             player2 = new Player(300, 50, "peach");
+            p2x = 300;
+            p2y = 50;
 
         }
         else {
             player1 = new Player(300, 50, "peach");
             player2 = new Player(150, 50, "mario");
-            
+            p2x = 150;
+            p2y = 50;
         }
         players.add(player1);
         players.add(player2);
@@ -78,6 +82,7 @@ public class GameFrame implements KeyListener {
             System.out.println("You are player#" + playerID);
             rfs = new ReadFromServer(in);
             wts = new WriteToServer(out);
+            rfs.waitForStartMsg();
         }
         catch(IOException e) {
             System.out.println("IOException in connectToServer");
@@ -181,15 +186,15 @@ public class GameFrame implements KeyListener {
         public ReadFromServer(DataInputStream d) {
             dataIn = d;
             System.out.println("RFS Runnable Created");
-
+           
+            
         }
         public void run() {
             try {
             while (true) {
+                p2x = dataIn.readInt();
+                p2y = dataIn.readInt();
                 if (player2 != null) {
-                    int p2x = dataIn.readInt();
-                    int p2y = dataIn.readInt();
-                    System.out.println(p2x);
                     player2.setX(p2x);
                     player2.setY(p2y);
                 }
@@ -199,20 +204,20 @@ public class GameFrame implements KeyListener {
             System.out.println("IOexception in readFromServer");
         }
         }
-        /*
+        
         public void waitForStartMsg() {
-            try {
-                String startMsg = dataIn.readUTF();
-                    System.out.println("Message from server: " + startMsg);
+           // try {}
+                //String startMsg = dataIn.readUTF();
+                    //System.out.println("Message from server: " + startMsg);
                     Thread read = new Thread(rfs);
                     read.start();
                     Thread write = new Thread(wts);
                     write.start();
-            }
-            catch(IOException e) {
+
+            //catch(IOException e) {}
     
-            }
-        } */
+            
+        } 
     }
     private class WriteToServer implements Runnable {
         private DataOutputStream dataOut;
@@ -225,9 +230,11 @@ public class GameFrame implements KeyListener {
             try {
             while (true) {
                 if (player1!= null) {
+                    //System.out.println(player1.getName());
                     dataOut.writeInt(player1.returnX());
                     dataOut.writeInt(player1.returnY());
                     dataOut.flush();
+                    //System.out.println(p2x);
                 }
                 try {
                     Thread.sleep(25);

@@ -64,10 +64,11 @@ public class GameServer {
                   Thread readThread2 = new Thread(p2ReadRunnable);
                   Thread writeThread1 = new Thread(p1WriteRunnable);
                   Thread writeThread2 = new Thread(p2WriteRunnable);
-                  readThread1.start();
-                  readThread2.start();
+                  
                   writeThread1.start();
                   writeThread2.start();
+                  readThread1.start();
+                  readThread2.start();
                 }
             }
             System.out.println("No longer accepting connections");
@@ -118,6 +119,7 @@ public class GameServer {
       try {
         while (true) {
           if (playerID == 1) {
+            //System.out.println("Player 2's position is " + p2x);
             dataOut.writeInt(p2x);
             dataOut.writeInt(p2y);
             //System.out.println("Player 2's position is : " + p2x);
