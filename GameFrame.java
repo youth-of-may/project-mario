@@ -15,7 +15,7 @@ public class GameFrame implements KeyListener {
     private int playerID;
     private int width;
     private int height;
-    private String winner;
+    private Timer updateTimer;
     private JLabel coin1, coin2;
     private JButton button;
     private GameCanvas canvas;
@@ -27,11 +27,10 @@ public class GameFrame implements KeyListener {
     private WriteToServer wts;
     
 
-    public GameFrame(int width, int height) throws IOException {
+    public GameFrame(int width, int height) throws IOException, FontFormatException {
         this.width = width;
         this.height = height;
         frame = new JFrame();
-        winner = "";
         button = new JButton("RETRY?");
         canvas = new GameCanvas();
         button.addActionListener(new ActionListener() {
@@ -129,12 +128,17 @@ public class GameFrame implements KeyListener {
     }
 
     public void updateChecker() {
-        Timer animationTimer = new Timer(20, new ActionListener() {
+        updateTimer = new Timer(20, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
+                    if(!canvas.ongoing)
+                        updateTimer.stop();
                     canvas.checkCollisions();
                     canvas.repaint();
+                    canvas.players.get(0).changeIcons();
+                    canvas.players.get(1).changeIcons();
+                    canvas.updateCoins();
                 } catch (UnsupportedAudioFileException ex) {
                     throw new RuntimeException(ex);
                 } catch (LineUnavailableException ex) {
@@ -144,54 +148,7 @@ public class GameFrame implements KeyListener {
                 }
             }
         });
-        animationTimer.start();
-        /*Timer gameEndTimer = new Timer(3000, new ActionListener() { // 5000 milliseconds = 5 seconds
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                animationTimer.stop();
-                canvas.ongoing = false;
-                canvas.stars.clear();
-                canvas.sc.clear();
-                canvas.shells.clear();
-                canvas.sleeps.clear();
-                canvas.blocks.clear();
-                canvas.enemies.clear();
-                try {
-                    canvas.printWinner(winnerCheck());
-                } catch (IOException ex) {
-                    throw new RuntimeException(ex);
-                }
-                canvas.repaint(); // Repaint the canvas to clear it
-            }
-        });
-        gameEndTimer.setRepeats(false); // Set the timer to run only once
-        gameEndTimer.start();
-
-         */
-
-    }
-
-    public String winnerCheck()
-    {
-        int coin1 = player1.coins;
-        int coin2 = player2.coins;
-
-        if(coin1 > coin2)
-        {
-            return "mario";
-        }
-
-        else if(coin2 > coin1)
-        {
-            return "peach";
-        }
-
-        else if(coin2 == coin1)
-        {
-            return "draw";
-        }
-
-        return null;
+        updateTimer.start();
     }
 
     public void restartGame() throws IOException {

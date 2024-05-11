@@ -9,9 +9,13 @@ import java.util.ArrayList;
 public class Player implements Objects {
     int x, y, xSpeed, ySpeed, width, height, imageX, imageY, coins;
     String name, direction, imagePath;
-    boolean starUp, hurt, shellUp, sleep, shooting;
+    boolean starUp, hurt, shellUp, sleepUp, sleep, shooting;
     ArrayList<ShellProjectile> shellProjectiles;
     BufferedImage spriteSheet;
+    StarTracker starTracker;
+    ShellTracker shellTracker;
+    SleepTracker sleepTracker;
+
 
     public Player(int x, int y, String name) throws IOException {
         this.x = x;
@@ -25,15 +29,25 @@ public class Player implements Objects {
         imageY = 0;
         coins = 100;
         sleep = false;
+        sleepUp = false;
         starUp = false;
         hurt = false;
         shooting = false;
         direction = "up";
         shellProjectiles = new ArrayList<>();
         if(name.equals("mario"))
+        {
             imagePath = "GameSprites/PLAYER1_SPRITESHEET.png";
-        else if(name.equals("peach"))
+            starTracker = new StarTracker(190, 560);
+            shellTracker = new ShellTracker(225, 560);
+            sleepTracker = new SleepTracker(260, 560);
+        }
+        else if(name.equals("peach")) {
             imagePath = "GameSprites/PLAYER2_SPRITESHEET.png";
+            starTracker = new StarTracker(690, 560);
+            shellTracker = new ShellTracker(725, 560);
+            sleepTracker = new SleepTracker(760, 560);
+        }
         spriteSheet = ImageIO.read(new File(imagePath));
     }
 
@@ -107,8 +121,39 @@ public class Player implements Objects {
         return direction;
     }
 
+    public void sleep()
+    {
+        xSpeed = 0;
+        ySpeed = 0;
+        sleep = true;
+    }
+
+    public void wakeUp()
+    {
+        xSpeed = 2;
+        ySpeed = 2;
+        sleep = false;
+    }
+
+    public void changeIcons()
+    {
+        if(shellUp)
+            shellTracker.imageX = 30;
+        else
+            shellTracker.imageX = 0;
 
 
+        if(starUp)
+            starTracker.imageX = 30;
+        else
+            starTracker.imageX = 0;
+
+
+        if(sleepUp)
+            sleepTracker.imageX = 30;
+        else
+            sleepTracker.imageX = 0;
+    }
 
     public boolean playerCollision(Player other)
     {
@@ -185,6 +230,8 @@ public class Player implements Objects {
         if(shellCollision(other) && !shellUp)
         {
             shellUp = true;
+            ShellAnimation shellAnimation = new ShellAnimation();
+            shellAnimation.start();
         }
     }
 
@@ -197,13 +244,18 @@ public class Player implements Objects {
 
     public void doSleepCollision(Sleep other, ArrayList<Player> players)
     {
-        if(sleepCollision(other)) {
+        if(sleepCollision(other))
+        {
+            sleepUp = true;
             for (Player player : players) {
-                if (player != this) {
-                    player.xSpeed = 0;
-                    player.ySpeed = 0;
+                if (player != this && !player.starUp) {
+                    player.sleep();
+                    System.out.println("Stopped " + player.name);
+                    SleepAnimation sleepAnimation = new SleepAnimation(player);
+                    sleepAnimation.start();
                     SleepTimer sleepTimer = new SleepTimer(players);
                     sleepTimer.start();
+
                 }
             }
         }
@@ -256,8 +308,10 @@ public class Player implements Objects {
 
 
     public void shootShell() throws IOException {
-        if(shellUp) {
+        if(shellUp)
+        {
             shellProjectiles.add(new ShellProjectile(x, y));
+            shellUp = true;
             shooting = true;
             shellProjectiles.get(0).new ShellAnimation().start();
             shellUp = false;
@@ -373,14 +427,15 @@ public class Player implements Objects {
         }
         @Override
         public void run() {
-            try {
-                Thread.sleep(10000);
-                for (Player player : players) {
-                    player.xSpeed = 2;
-                    player.ySpeed = 2;
+            for (Player player : players)
+            {
+                try {
+                    Thread.sleep(5000);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
                 }
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+                player.wakeUp();
+                Player.this.sleepUp = false;
             }
         }
     }
@@ -408,6 +463,51 @@ public class Player implements Objects {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+        }
+    }
+
+    private class SleepAnimation extends Thread
+    {
+        private Player player;
+
+        public SleepAnimation(Player player)
+        {
+            this.player = player;
+        }
+        @Override
+        public void run()
+        {
+            while(player.sleep)
+            {
+                player.imageX = 120;
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            player.imageX = 0;
+        }
+    }
+
+    private class ShellAnimation extends Thread
+    {
+        @Override
+        public void run()
+        {
+            while(shellUp)
+            {
+                if(!starUp && !hurt)
+                {
+                    imageX = 160;
+                    try {
+                        Thread.sleep(100);
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            }
+            imageX = 0;
         }
     }
 
@@ -557,6 +657,238 @@ public class Player implements Objects {
         }
     }
 
+    public class StarTracker implements Objects
+    {
+        int x, y, imageX, imageY, width, height;
+        String imagePath1;
+        BufferedImage myPicture1;
+
+        public StarTracker(int x, int y) throws IOException
+        {
+            this.x = x;
+            this.y = y;
+            imageX = 0;
+            imageY = 0;
+            width = 30;
+            height = 30;
+            imagePath1 = "GameSprites/STARTRACKER.png";
+            myPicture1 = ImageIO.read(new File(imagePath1));
+        }
+
+        @Override
+        public void draw(Graphics2D g2d)
+        {
+            RenderingHints rh = new RenderingHints(
+                    RenderingHints.KEY_ANTIALIASING,
+                    RenderingHints.VALUE_ANTIALIAS_ON);
+            g2d.setRenderingHints(rh);
+            // Enable antialiasing for smoother rendering
+            g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            // Use better interpolation for image scaling
+            g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+            g2d.drawImage(myPicture1.getSubimage(imageX, imageY, width, height), x, y, null);
+        }
+
+        @Override
+        public void adjustX() {
+
+        }
+
+        @Override
+        public void adjustY() {
+
+        }
+
+        @Override
+        public int returnX() {
+            return 0;
+        }
+
+        @Override
+        public int returnY() {
+            return 0;
+        }
+
+        @Override
+        public String returnStatus() {
+            return null;
+        }
+
+        @Override
+        public void changeStatus() {
+
+        }
+
+        @Override
+        public String returnDirection() {
+            return null;
+        }
+
+        @Override
+        public void changeDirection(String direction) {
+
+        }
+
+        @Override
+        public int returnCoins() {
+            return 0;
+        }
+    }
+
+    public class ShellTracker implements Objects
+    {
+        int x, y, imageX, imageY, width, height;
+        String imagePath1;
+        BufferedImage myPicture1;
+
+        public ShellTracker(int x, int y) throws IOException
+        {
+            this.x = x;
+            this.y = y;
+            imageX = 0;
+            imageY = 0;
+            width = 30;
+            height = 30;
+            imagePath1 = "GameSprites/SHELLTRACKER.png";
+            myPicture1 = ImageIO.read(new File(imagePath1));
+        }
+
+        @Override
+        public void draw(Graphics2D g2d)
+        {
+            RenderingHints rh = new RenderingHints(
+                    RenderingHints.KEY_ANTIALIASING,
+                    RenderingHints.VALUE_ANTIALIAS_ON);
+            g2d.setRenderingHints(rh);
+            g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+            g2d.drawImage(myPicture1.getSubimage(imageX, imageY, width, height), x, y, null);
+        }
+
+        @Override
+        public void adjustX() {
+
+        }
+
+        @Override
+        public void adjustY() {
+
+        }
+
+        @Override
+        public int returnX() {
+            return 0;
+        }
+
+        @Override
+        public int returnY() {
+            return 0;
+        }
+
+        @Override
+        public String returnStatus() {
+            return null;
+        }
+
+        @Override
+        public void changeStatus() {
+
+        }
+
+        @Override
+        public String returnDirection() {
+            return null;
+        }
+
+        @Override
+        public void changeDirection(String direction) {
+
+        }
+
+        @Override
+        public int returnCoins() {
+            return 0;
+        }
+    }
+
+    public class SleepTracker implements Objects
+    {
+        int x, y, imageX, imageY, width, height;
+        String imagePath1;
+        BufferedImage myPicture1;
+
+        public SleepTracker(int x, int y) throws IOException
+        {
+            this.x = x;
+            this.y = y;
+            imageX = 0;
+            imageY = 0;
+            width = 30;
+            height = 30;
+            imagePath1 = "GameSprites/SLEEPTRACKER.png";
+            myPicture1 = ImageIO.read(new File(imagePath1));
+        }
+
+        @Override
+        public void draw(Graphics2D g2d)
+        {
+            RenderingHints rh = new RenderingHints(
+                    RenderingHints.KEY_ANTIALIASING,
+                    RenderingHints.VALUE_ANTIALIAS_ON);
+            g2d.setRenderingHints(rh);
+            // Enable antialiasing for smoother rendering
+            g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            // Use better interpolation for image scaling
+            g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+            g2d.drawImage(myPicture1.getSubimage(imageX, imageY, width, height), x, y, null);
+        }
+
+        @Override
+        public void adjustX() {
+
+        }
+
+        @Override
+        public void adjustY() {
+
+        }
+
+        @Override
+        public int returnX() {
+            return 0;
+        }
+
+        @Override
+        public int returnY() {
+            return 0;
+        }
+
+        @Override
+        public String returnStatus() {
+            return null;
+        }
+
+        @Override
+        public void changeStatus() {
+
+        }
+
+        @Override
+        public String returnDirection() {
+            return null;
+        }
+
+        @Override
+        public void changeDirection(String direction) {
+
+        }
+
+        @Override
+        public int returnCoins() {
+            return 0;
+        }
+
+    }
 
 
 }

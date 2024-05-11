@@ -18,12 +18,12 @@ of my program.
 */
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
+import java.awt.*;
 import java.io.IOException;
 
 public class GameStarter
 {
-    public static void main(String[] args) throws UnsupportedAudioFileException, LineUnavailableException, IOException
-    {
+    public static void main(String[] args) throws UnsupportedAudioFileException, LineUnavailableException, IOException, FontFormatException {
         GameFrame gd = new GameFrame(800, 600);
         gd.setGUI();
     }
