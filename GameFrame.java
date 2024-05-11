@@ -27,11 +27,18 @@ public class GameFrame implements KeyListener {
     private WriteToServer wts;
 
 
-    public GameFrame(int width, int height) throws IOException, FontFormatException {
+    public GameFrame(int width, int height) throws IOException, FontFormatException, UnsupportedAudioFileException, LineUnavailableException {
         this.width = width;
         this.height = height;
         frame = new JFrame();
         button = new JButton("RETRY?");
+        button.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                restartGame();
+            }
+        });
         canvas = new GameCanvas();
 
         //for networking stuff
@@ -105,7 +112,7 @@ public class GameFrame implements KeyListener {
         canvas.setFocusable(true);
         canvas.addKeyListener(this);
         frame.add(canvas, BorderLayout.CENTER);
-        //frame.add(button, BorderLayout.SOUTH);
+        frame.add(button, BorderLayout.SOUTH);
         frame.pack();
         frame.setVisible(true);
         canvas.requestFocusInWindow();
@@ -150,6 +157,13 @@ public class GameFrame implements KeyListener {
         updateTimer.start();
     }
 
+    public void restartGame()
+    {
+        canvas.timeLeft = 200;
+        canvas.ongoing = true;
+        canvas.addPlayers(players);
+        updateTimer.start();
+    }
     @Override
     public void keyTyped(KeyEvent e)
     {

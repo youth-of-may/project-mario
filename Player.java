@@ -275,8 +275,6 @@ public class Player implements Objects {
             starTimer.start();
             StarAnimation starAnimation = new StarAnimation();
             starAnimation.start();
-            StarMusic starMusic = new StarMusic();
-            starMusic.start();
         }
     }
 
@@ -535,23 +533,6 @@ public class Player implements Objects {
         }
     }
 
-    private class StarMusic extends Thread
-    {
-        File file;
-        AudioInputStream audioStream;
-        Clip clip;
-        private StarMusic() throws LineUnavailableException, UnsupportedAudioFileException, IOException {
-            file = new File("Music/STAR.wav");
-            audioStream = AudioSystem.getAudioInputStream(file);
-            clip = AudioSystem.getClip();
-            clip.open(audioStream);
-        }
-        @Override
-        public void run()
-        {
-            clip.start();
-        }
-    }
 
     public class ShellProjectile implements Objects
     {
@@ -602,8 +583,14 @@ public class Player implements Objects {
         }
 
         @Override
-        public String returnStatus() {
-            return null;
+        public String returnStatus()
+        {
+            if(starUp)
+                return "star";
+            else if (hurt)
+                return "hurt";
+            else
+                return "normal";
         }
 
         @Override

@@ -29,9 +29,11 @@ public class GameCanvas extends JComponent {
     Font font;
     TimerImage timer;
     JLabel count1, count2, countdown;
+    SongPlayer player;
 
 
-    public GameCanvas() throws IOException, FontFormatException {
+
+    public GameCanvas() throws IOException, FontFormatException, UnsupportedAudioFileException, LineUnavailableException {
         setPreferredSize(new Dimension(800, 600));
         ongoing = true;
         timeLeft = 5;
@@ -43,8 +45,6 @@ public class GameCanvas extends JComponent {
         shells = new ArrayList<>();
         enemies = new ArrayList<>();
         screens = new ArrayList<>();
-        stars.add(new Star(300, 200));
-        stars.add(new Star(350, 200));
         icon1 = new PlayerIcons(10, 530, "mario");
         icon2 = new PlayerIcons(510, 530, "peach");
         counter1 = new CoinCounter(60, 550);
@@ -65,13 +65,16 @@ public class GameCanvas extends JComponent {
         countdown.setFont(font.deriveFont(Font.PLAIN, 20f));
         countdown.setBounds(400, 555, 200, 50);
         countdown.setForeground(Color.WHITE);
-        shells.add(new Shell(200, 200));
         add(count1);
         add(count2);
         add(countdown);
         countdownTimer.start();
+        player = new SongPlayer();
         addBlocks();
         addEnemies();
+        stars.add(new Star(200, 200));
+        player.play(player.BG);
+        statusMusic();
     }
 
     public void addPlayers(ArrayList<Player> p) {
@@ -516,6 +519,16 @@ public class GameCanvas extends JComponent {
             if(timeLeft <= 0)
             {
                 countdownTimer.stop();
+                player.stop();
+                try {
+                    player.play(player.CLEAR);
+                } catch (LineUnavailableException ex) {
+                    throw new RuntimeException(ex);
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                } catch (UnsupportedAudioFileException ex) {
+                    throw new RuntimeException(ex);
+                }
                 ongoing=false;
                 try {
                     printWinner(winnerCheck());
@@ -525,4 +538,45 @@ public class GameCanvas extends JComponent {
             }
         }
     });
+
+    public void statusMusic()
+    {
+        Timer statusTimer = new Timer(20, new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                for(Player players : players)
+                {
+                    if (players.returnStatus().equals("star"))
+                    {
+                        try {
+                            playStarMusic();
+                        } catch (UnsupportedAudioFileException ex) {
+                            throw new RuntimeException(ex);
+                        } catch (LineUnavailableException ex) {
+                            throw new RuntimeException(ex);
+                        } catch (IOException ex) {
+                            throw new RuntimeException(ex);
+                        }
+                    }
+
+                    else if (players.returnStatus().equals("hurt"))
+                    {
+                        break;
+                    }
+
+                    else if (players.returnStatus().equals("normal"))
+                    {
+                        break;
+                    }
+                }
+            }
+        });
+        statusTimer.start();
+    }
+    public void playStarMusic() throws UnsupportedAudioFileException, LineUnavailableException, IOException
+    {
+        player.stop();
+        player.play(player.STAR);
+    }
 }
