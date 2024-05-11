@@ -79,6 +79,11 @@ public class GameCanvas extends JComponent {
         players = p;
         //System.out.println("Successfully added.");
     }
+    public void startAnimations() {
+        for (Enemy e: enemies) {
+            e.startThreads();
+        }
+    }
 
     @Override
     public void paintComponent(Graphics g) {
