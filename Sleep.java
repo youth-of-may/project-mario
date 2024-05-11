@@ -3,6 +3,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class Sleep implements Objects
 {
@@ -79,6 +80,17 @@ public class Sleep implements Objects
         return 0;
     }
 
-    ;
+    public boolean blockCollision(ArrayList<Block> blocks)
+    {
+        for(Block other:blocks)
+        {
+            boolean horizontalCollision = this.x < other.x + other.width && this.x + this.width > other.x;
+            boolean verticalCollision = this.y < other.y + other.height && this.y + this.height > other.y;
+            if (horizontalCollision && verticalCollision) {
+                return true;
+            }
+        }
+        return false;
+    }
 
 }

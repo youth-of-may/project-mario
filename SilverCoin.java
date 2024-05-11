@@ -3,6 +3,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class SilverCoin implements Objects
 {
@@ -77,4 +78,69 @@ public class SilverCoin implements Objects
     public int returnCoins() {
         return 0;
     }
+
+    public boolean starCollision(ArrayList<Star> stars)
+    {
+        for(Star other:stars)
+        {
+            boolean horizontalCollision = this.x < other.x + other.width && this.x + this.width > other.x;
+            boolean verticalCollision = this.y < other.y + other.height && this.y + this.height > other.y;
+            if (horizontalCollision && verticalCollision) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean shellCollision(ArrayList<Shell> shells)
+    {
+        for(Shell other:shells)
+        {
+            boolean horizontalCollision = this.x < other.x + other.width && this.x + this.width > other.x;
+            boolean verticalCollision = this.y < other.y + other.height && this.y + this.height > other.y;
+            if (horizontalCollision && verticalCollision) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean sleepCollision(ArrayList<Sleep> sleeps)
+    {
+        for(Sleep other: sleeps)
+        {
+            boolean horizontalCollision = this.x < other.x + other.width && this.x + this.width > other.x;
+            boolean verticalCollision = this.y < other.y + other.height && this.y + this.height > other.y;
+            if (horizontalCollision && verticalCollision) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    public boolean scCollision(ArrayList<SilverCoin> sc)
+    {
+        for(SilverCoin other:sc)
+        {
+            boolean horizontalCollision = this.x < other.x + other.width && this.x + this.width > other.x;
+            boolean verticalCollision = this.y < other.y + other.height && this.y + this.height > other.y;
+            if (horizontalCollision && verticalCollision) {
+                return true;
+            }
+        }
+        return false;
+    }
+    public boolean blockCollision(ArrayList<Block> blocks)
+    {
+        for(Block other:blocks)
+        {
+            boolean horizontalCollision = this.x < other.x + other.width && this.x + this.width > other.x;
+            boolean verticalCollision = this.y < other.y + other.height && this.y + this.height > other.y;
+            if (horizontalCollision && verticalCollision) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 }

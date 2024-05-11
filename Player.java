@@ -237,18 +237,18 @@ public class Player implements Objects {
 
     public void doProjectileCollision(ArrayList<ShellProjectile> shells, ArrayList<Player> players)
     {
-        // Iterate over each player
         for (Player player : players)
         {
-            // Check collision with each shell projectile
             for (ShellProjectile shell : shells)
             {
-                if (player.projectileCollision(shell))
+                if (player != this && player.projectileCollision(shell) && !player.hurt)
                 {
-                    // Perform collision handling
-                    System.out.println("Collision detected with player: " + player.name);
-                    player.coins -= 3; // Deduct coins from the player
-                    // Additional handling if needed
+                    player.hurt = true;
+                    player.coins -= 3;
+                    HurtTimer hurtTimer = new HurtTimer(player);
+                    hurtTimer.start();
+                    HurtAnimation hurtAnimation = new HurtAnimation(player);
+                    hurtAnimation.start();
                 }
             }
         }

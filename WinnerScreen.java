@@ -3,23 +3,24 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 
-public class Star implements Objects
+public class WinnerScreen implements Objects
 {
-    int x, y, width, height;
-    String imagePath1;
-    BufferedImage myPicture1;
+    String winner;
+    String imagePath;
+    BufferedImage screen;
 
-    public Star(int x, int y) throws IOException {
-        this.x = x;
-        this.y = y;
-        width = 35;
-        height = 35;
-        imagePath1 = "GameSprites/STAR.png";
-        myPicture1 = ImageIO.read(new File(imagePath1));
+    public WinnerScreen(String name) throws IOException {
+        winner = name;
+        if(winner.equals("mario"))
+            imagePath = "GameSprites/WINNER1.png";
+        else if(winner.equals("peach"))
+            imagePath = "GameSprites/WINNER2.png";
+        else if(winner.equals("draw"))
+            imagePath = "GameSprites/WINNER3.png";
+        screen = ImageIO.read(new File(imagePath));
     }
-
+    @Override
     public void draw(Graphics2D g2d)
     {
         RenderingHints rh = new RenderingHints(
@@ -30,7 +31,7 @@ public class Star implements Objects
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         // Use better interpolation for image scaling
         g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-        g2d.drawImage(myPicture1, x, y, null);
+        g2d.drawImage(screen, 0, 0, null);
     }
 
     @Override
@@ -76,18 +77,5 @@ public class Star implements Objects
     @Override
     public int returnCoins() {
         return 0;
-    }
-
-    public boolean blockCollision(ArrayList<Block> blocks)
-    {
-        for(Block other:blocks)
-        {
-            boolean horizontalCollision = this.x < other.x + other.width && this.x + this.width > other.x;
-            boolean verticalCollision = this.y < other.y + other.height && this.y + this.height > other.y;
-            if (horizontalCollision && verticalCollision) {
-                return true;
-            }
-        }
-        return false;
     }
 }
