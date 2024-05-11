@@ -11,11 +11,7 @@ import java.util.*;
 public class GameCanvas extends JComponent
 {
     ObjectGenerator objectGenerator;
-    public int gameTime = 5;
-    private Timer gameTimer;
     public boolean ongoing;
-    Player player1;
-    Player player2;
     ArrayList<Player> players;
     ArrayList<Block> blocks;
     ArrayList<SilverCoin> sc;
@@ -317,7 +313,7 @@ public class GameCanvas extends JComponent
                 {
                     try {
                         Shell shell = new Shell(objectX, objectY);
-                        if(!shell.blockCollision(blocks))
+                        if(!shell.blockCollision(blocks) && !shell.shellCollision(shells) && !shell.starCollision(stars) && !shell.sleepCollision(sleeps))
                             shells.add(shell);
                     } catch (IOException ex) {
                         throw new RuntimeException(ex);
@@ -328,7 +324,7 @@ public class GameCanvas extends JComponent
                 {
                     try {
                         Sleep sleep = new Sleep(objectX, objectY);
-                        if(!sleep.blockCollision(blocks))
+                        if(!sleep.blockCollision(blocks) && !sleep.shellCollision(shells) && !sleep.starCollision(stars) && !sleep.sleepCollision(sleeps))
                             sleeps.add(sleep);
                     } catch (IOException ex) {
                         throw new RuntimeException(ex);
@@ -339,7 +335,7 @@ public class GameCanvas extends JComponent
                 {
                     try {
                         Star star = new Star(objectX, objectY);
-                        if(!star.blockCollision(blocks))
+                        if(!star.blockCollision(blocks) && !star.shellCollision(shells) && !star.starCollision(stars) && !star.sleepCollision(sleeps))
                             stars.add(star);
                     } catch (IOException ex) {
                         throw new RuntimeException(ex);

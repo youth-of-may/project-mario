@@ -93,4 +93,43 @@ public class Sleep implements Objects
         return false;
     }
 
+    public boolean starCollision(ArrayList<Star> stars)
+    {
+        for(Star other:stars)
+        {
+            boolean horizontalCollision = this.x < other.x + other.width && this.x + this.width > other.x;
+            boolean verticalCollision = this.y < other.y + other.height && this.y + this.height > other.y;
+            if (horizontalCollision && verticalCollision) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean shellCollision(ArrayList<Shell> shells)
+    {
+        for(Shell other:shells)
+        {
+            boolean horizontalCollision = this.x < other.x + other.width && this.x + this.width > other.x;
+            boolean verticalCollision = this.y < other.y + other.height && this.y + this.height > other.y;
+            if (horizontalCollision && verticalCollision) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean sleepCollision(ArrayList<Sleep> sleeps)
+    {
+        for(Sleep other: sleeps)
+        {
+            boolean horizontalCollision = this.x < other.x + other.width && this.x + this.width > other.x;
+            boolean verticalCollision = this.y < other.y + other.height && this.y + this.height > other.y;
+            if (horizontalCollision && verticalCollision) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 }
