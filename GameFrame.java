@@ -1,3 +1,5 @@
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -14,7 +16,9 @@ public class GameFrame implements KeyListener {
     private int playerID;
     private int width;
     private int height;
+    private String winner;
     private JLabel coin1, coin2;
+    private JButton button;
     private GameCanvas canvas;
     private ArrayList<Player> players;
     private Player player1;
@@ -28,7 +32,19 @@ public class GameFrame implements KeyListener {
         this.width = width;
         this.height = height;
         frame = new JFrame();
+        winner = "";
+        button = new JButton("RETRY?");
         canvas = new GameCanvas();
+        button.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    restartGame();
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
+            }
+        });
 
         //for networking stuff
         players = new ArrayList<>();
@@ -94,20 +110,20 @@ public class GameFrame implements KeyListener {
         connectToServer();
         createSprites();
         setUpCoins();
+        updateChecker();
         canvas.addPlayers(players);
-        frame.setSize(width, height);
         frame.setTitle("Final Project - Giron - Olegario");
-        frame.setLayout(null);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setSize(width, height);
+        frame.setLayout(new BorderLayout());
         canvas.setPreferredSize(new Dimension(800, 600));
-        frame.add(coin1);
-        frame.add(coin2);
-        frame.add(canvas);
-        canvas.setBounds(0, 0, 800, 600);
-        coin1.setBounds(100, 400, 145, 40);
-        coin2.setBounds(300, 400, 145, 40);
+        canvas.addPlayers(players);
         canvas.setFocusable(true);
-        frame.setVisible(true);
         canvas.addKeyListener(this);
+        frame.add(canvas, BorderLayout.CENTER);
+        //frame.add(button, BorderLayout.SOUTH);
+        frame.pack();
+        frame.setVisible(true);
         canvas.requestFocusInWindow();
     }
 
@@ -117,6 +133,77 @@ public class GameFrame implements KeyListener {
         coin2.setText("Coins: " + player2.coins);
     }
 
+    public void updateChecker() {
+        Timer animationTimer = new Timer(20, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    canvas.checkCollisions();
+                    canvas.repaint();
+                } catch (UnsupportedAudioFileException ex) {
+                    throw new RuntimeException(ex);
+                } catch (LineUnavailableException ex) {
+                    throw new RuntimeException(ex);
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
+            }
+        });
+        animationTimer.start();
+        /*Timer gameEndTimer = new Timer(3000, new ActionListener() { // 5000 milliseconds = 5 seconds
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                animationTimer.stop();
+                canvas.ongoing = false;
+                canvas.stars.clear();
+                canvas.sc.clear();
+                canvas.shells.clear();
+                canvas.sleeps.clear();
+                canvas.blocks.clear();
+                canvas.enemies.clear();
+                try {
+                    canvas.printWinner(winnerCheck());
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
+                canvas.repaint(); // Repaint the canvas to clear it
+            }
+        });
+        gameEndTimer.setRepeats(false); // Set the timer to run only once
+        gameEndTimer.start();
+
+         */
+
+    }
+
+    public String winnerCheck()
+    {
+        int coin1 = player1.coins;
+        int coin2 = player2.coins;
+
+        if(coin1 > coin2)
+        {
+            return "mario";
+        }
+
+        else if(coin2 > coin1)
+        {
+            return "peach";
+        }
+
+        else if(coin2 == coin1)
+        {
+            return "draw";
+        }
+
+        return null;
+    }
+
+    public void restartGame() throws IOException {
+        canvas.restartGame();
+        canvas.repaint();
+        updateChecker();
+    }
     @Override
     public void keyTyped(KeyEvent e)
     {

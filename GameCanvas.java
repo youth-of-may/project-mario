@@ -10,9 +10,8 @@ import java.util.*;
 
 public class GameCanvas extends JComponent
 {
-    CoinGenerator coinGenerator;
-    Player player1;
-    Player player2;
+    ObjectGenerator objectGenerator;
+    public boolean ongoing;
     ArrayList<Player> players;
     ArrayList<Block> blocks;
     ArrayList<SilverCoin> sc;
@@ -20,18 +19,13 @@ public class GameCanvas extends JComponent
     ArrayList<Sleep> sleeps;
     ArrayList<Shell> shells;
     ArrayList<Enemy> enemies;
+    ArrayList<WinnerScreen> screens;
     BG bg = new BG(0, 0);
 
 
     public GameCanvas() throws IOException {
         setPreferredSize(new Dimension(800, 600));
-        Timer timer = new Timer(16, new ActionListener() { // Adjust the delay according to your desired frame rate
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                repaint(); // Trigger repaint every time the timer ticks
-            }
-        });
-        timer.start();
+        ongoing = true;
         players = new ArrayList<>();
         blocks = new ArrayList<>();
         sc = new ArrayList<>();
@@ -39,32 +33,11 @@ public class GameCanvas extends JComponent
         sleeps = new ArrayList<>();
         shells = new ArrayList<>();
         enemies = new ArrayList<>();
-        for(int i = 1; i < 19; i++)
-        {
-            blocks.add(new Block(750, i * 25));
-        }
-        for(int i = 1; i < 19; i++)
-        {
-            blocks.add(new Block(0, i * 25));
-        }
-        for(int i = 1; i < 30; i++)
-        {
-            blocks.add(new Block(i * 25, 25));
-        }
-        for(int i = 1; i < 30; i++)
-        {
-            blocks.add(new Block(i * 25, 475));
-        }
-
-        //players.add(player1 = new Player(150, 50, "mario"));
-        //players.add(player2 = new Player(300, 50, "peach"));
-        sleeps.add(new Sleep(200, 200));
-        shells.add(new Shell(250, 250));
-        enemies.add(new Enemy(100, 300));
-        stars.add(new Star(150, 300));
-        coinGenerator = new CoinGenerator();
-        coinGenerator.start();
-        collisionChecker();
+        screens = new ArrayList<>();
+        objectGenerator = new ObjectGenerator();
+        objectGenerator.start();
+        addBlocks();
+        addEnemies();
     }
     public void addPlayers(ArrayList<Player> p) {
         //add players from GameFrame
@@ -81,9 +54,6 @@ public class GameCanvas extends JComponent
                 RenderingHints.VALUE_ANTIALIAS_ON);
         g2d.setRenderingHints(rh);
         bg.draw(g2d);
-        for (Player player : players) {
-            player.draw(g2d);
-        }
         for (Block block : blocks) {
             block.draw(g2d);
         }
@@ -103,6 +73,12 @@ public class GameCanvas extends JComponent
             enemy.draw(g2d);
         }
         for (Player player : players) {
+            player.draw(g2d);
+        }
+        for (WinnerScreen screen : screens) {
+            screen.draw(g2d);
+        }
+        for (Player player : players) {
             if (player.shooting) {
                 for (Player.ShellProjectile shellProjectile : player.shellProjectiles)
                 {
@@ -112,23 +88,6 @@ public class GameCanvas extends JComponent
         }
     }
 
-    public void collisionChecker() {
-        Timer animationTimer = new Timer(20, new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                try {
-                    checkCollisions();
-                } catch (UnsupportedAudioFileException ex) {
-                    throw new RuntimeException(ex);
-                } catch (LineUnavailableException ex) {
-                    throw new RuntimeException(ex);
-                } catch (IOException ex) {
-                    throw new RuntimeException(ex);
-                }
-            }
-        });
-        animationTimer.start();
-    }
 
     public Player getPlayer(int index) {
         return players.get(index);
@@ -202,31 +161,221 @@ public class GameCanvas extends JComponent
         }
     }
 
+    public void addBlocks() throws IOException {
+        for(int i = 1; i < 19; i++)
+        {
+            blocks.add(new Block(750, i * 25));
+        }
+        for(int i = 1; i < 19; i++)
+        {
+            blocks.add(new Block(25, i * 25));
+        }
+        for(int i = 1; i < 30; i++)
+        {
+            blocks.add(new Block(i * 25, 25));
+        }
+        for(int i = 1; i < 31; i++)
+        {
+            blocks.add(new Block(i * 25, 475));
+        }
+        blocks.add(new Block(100, 100));
+        blocks.add(new Block(125, 100));
+        blocks.add(new Block(150, 100));
+        blocks.add(new Block(175, 100));
+        blocks.add(new Block(250, 100));
+        blocks.add(new Block(275, 100));
+        blocks.add(new Block(300, 100));
+        blocks.add(new Block(325, 100));
+        blocks.add(new Block(100, 175));
+        blocks.add(new Block(125, 175));
+        blocks.add(new Block(150, 175));
+        blocks.add(new Block(100, 200));
+        blocks.add(new Block(100, 225));
+        blocks.add(new Block(100, 250));
+        blocks.add(new Block(100, 275));
+        blocks.add(new Block(100, 300));
+        blocks.add(new Block(100, 325));
+        blocks.add(new Block(100, 350));
+        blocks.add(new Block(175, 250));
+        blocks.add(new Block(175, 275));
+        blocks.add(new Block(175, 300));
+        blocks.add(new Block(200, 300));
+        blocks.add(new Block(225, 300));
+        blocks.add(new Block(175, 400));
+        blocks.add(new Block(175, 425));
+        blocks.add(new Block(175, 450));
+        blocks.add(new Block(200, 400));
+        blocks.add(new Block(225, 400));
+        blocks.add(new Block(300, 400));
+        blocks.add(new Block(325, 400));
+        blocks.add(new Block(350, 400));
+        blocks.add(new Block(450, 400));
+        blocks.add(new Block(475, 400));
+        blocks.add(new Block(500, 400));
+        blocks.add(new Block(600, 400));
+        blocks.add(new Block(625, 400));
+        blocks.add(new Block(650, 400));
+        blocks.add(new Block(650, 425));
+        blocks.add(new Block(650, 450));
+        blocks.add(new Block(650, 300));
+        blocks.add(new Block(625, 300));
+        blocks.add(new Block(600, 300));
+        blocks.add(new Block(650, 275));
+        blocks.add(new Block(650, 250));
+        blocks.add(new Block(650, 225));
+        blocks.add(new Block(650, 200));
+        blocks.add(new Block(650, 175));
+        blocks.add(new Block(650, 150));
+        blocks.add(new Block(650, 125));
+        blocks.add(new Block(650, 100));
+        blocks.add(new Block(550, 100));
+        blocks.add(new Block(550, 75));
+        blocks.add(new Block(550, 50));
+        blocks.add(new Block(525, 100));
+        blocks.add(new Block(575, 100));
+    }
 
-    public class CoinGenerator extends Thread
+    public void addEnemies() throws IOException
     {
-        public void run() {
-            Timer coinTimer = new Timer(5000, new ActionListener() {
+        enemies.add(new Enemy(53, 425, "up", true));
+        enemies.add(new Enemy(692, 53, "down", true));
+        enemies.add(new Enemy(210, 430, "right", true));
+        enemies.add(new Enemy(570, 170, "left", false));
+    }
+
+    public void printWinner(String name) throws IOException {
+        String winner = name;
+        if(winner.equals("mario"))
+        {
+            screens.add(new WinnerScreen("mario"));
+        }
+        else if(winner.equals("peach"))
+        {
+            screens.add(new WinnerScreen("peach"));
+        }
+        else if(winner.equals("draw"))
+        {
+            screens.add(new WinnerScreen("draw"));
+        }
+    }
+
+    public void restartGame() throws IOException {
+        screens.clear();
+        addBlocks();
+        enemies.add(new Enemy(100, 300, "up", true));
+        objectGenerator.stopTimer();
+        objectGenerator = new ObjectGenerator();
+        objectGenerator.restartTimer();
+        ongoing = true;
+    }
+
+    public class ObjectGenerator extends Thread
+    {
+        private Timer powerUpTimer;
+        private Timer coinTimer;
+        int minX = 51;
+        int maxX = 699;
+        int minY = 51;
+        int maxY = 449;
+        public void run()
+        {
+            Timer powerUpTimer = new Timer(30000, new ActionListener() {
                 @Override
-                public void actionPerformed(ActionEvent e) {
-                    sc.clear();
-
-                    for (int i = 0; i < 10; i++)
-                    {
-                        int coinX = (int) (Math.random() * (getWidth() - 50));
-                        int coinY = (int) (Math.random() * (getHeight() - 50));
-
-
-                        try {
-                            sc.add(new SilverCoin(coinX, coinY));
-                        } catch (IOException ex) {
-                            throw new RuntimeException(ex);
-                        }
-                    }
+                public void actionPerformed(ActionEvent e)
+                {
+                    stars.clear();
+                    shells.clear();
+                    sleeps.clear();
+                    generatePower();
                     repaint();
                 }
             });
+            Timer coinTimer = new Timer(15000, new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    sc.clear();
+                    generateCoins();
+                    repaint();
+                }
+            });
+            powerUpTimer.start();
             coinTimer.start();
+        }
+
+        public void generatePower()
+        {
+            for (int i = 0; i < 3; i++)
+            {
+                int objectX = (int) (Math.random() * (maxX - minX)) + minX;
+                int objectY = (int) (Math.random() * (maxY - minY)) + minY;
+                int x = (int) Math.floor((Math.random() * 10) + 1);
+                if(x <= 5)
+                {
+                    try {
+                        Shell shell = new Shell(objectX, objectY);
+                        if(!shell.blockCollision(blocks) && !shell.shellCollision(shells) && !shell.starCollision(stars) && !shell.sleepCollision(sleeps))
+                            shells.add(shell);
+                    } catch (IOException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                }
+
+                if((x > 5) && (x <= 8))
+                {
+                    try {
+                        Sleep sleep = new Sleep(objectX, objectY);
+                        if(!sleep.blockCollision(blocks) && !sleep.shellCollision(shells) && !sleep.starCollision(stars) && !sleep.sleepCollision(sleeps))
+                            sleeps.add(sleep);
+                    } catch (IOException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                }
+
+                if((x > 8) && (x <= 10))
+                {
+                    try {
+                        Star star = new Star(objectX, objectY);
+                        if(!star.blockCollision(blocks) && !star.shellCollision(shells) && !star.starCollision(stars) && !star.sleepCollision(sleeps))
+                            stars.add(star);
+                    } catch (IOException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                }
+
+            }
+        }
+
+        public void generateCoins()
+        {
+            for (int i = 0; i < 10; i++)
+            {
+                int objectX = (int) (Math.random() * (maxX - minX)) + minX;
+                int objectY = (int) (Math.random() * (maxY - minY)) + minY;
+                try {
+                    SilverCoin coin = new SilverCoin(objectX, objectY);
+                    if(!coin.blockCollision(blocks) && !coin.scCollision(sc) && !coin.sleepCollision(sleeps) && !coin.starCollision(stars) && !coin.shellCollision(shells))
+                        sc.add(coin);
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
+            }
+        }
+        public void stopTimer() {
+            if (powerUpTimer != null) {
+                powerUpTimer.stop();
+            }
+            if (coinTimer != null) {
+                coinTimer.stop();
+            }
+        }
+
+        public void restartTimer() {
+            if (powerUpTimer != null) {
+                powerUpTimer.restart();
+            }
+            if (coinTimer != null) {
+                coinTimer.restart();
+            }
         }
     }
 }
