@@ -5,6 +5,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.io.DataInput;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.net.*;
@@ -24,8 +25,8 @@ public class GameFrame implements KeyListener {
     private Player player1;
     private Player player2;
     private Socket socket;
-    private ReadFromServer rfs;
-    private WriteToServer wts;
+    private ReadFromServer rfsRunnable;
+    private WriteToServer wtsRunnable;
     
 
     public GameFrame(int width, int height) throws IOException {
@@ -48,7 +49,7 @@ public class GameFrame implements KeyListener {
 
         //for networking stuff
         players = new ArrayList<>();
-        playerID = 0;
+        playerID = 1;
 
         /*
         player1 = canvas.getPlayer(0);
@@ -61,6 +62,7 @@ public class GameFrame implements KeyListener {
         /*
          * This is for creating players based on the player id/player number
          */
+        connectToServer();
         if (playerID == 1) {
             player1 = new Player(150, 50, "mario");
             player2 = new Player(300, 50, "peach");
@@ -77,6 +79,7 @@ public class GameFrame implements KeyListener {
         players.add(player1);
         players.add(player2);
         System.out.println("Players created");
+        setUpCoins();
     }
     private void setUpCoins() {
         /*
@@ -94,11 +97,11 @@ public class GameFrame implements KeyListener {
             socket = new Socket("localhost", 55555);
             DataInputStream in = new DataInputStream(socket.getInputStream());
             DataOutputStream out = new DataOutputStream(socket.getOutputStream());
-            playerID = in.readInt(); //tells you if you're the first one to connect or what
-            System.out.println("You are player#" + playerID);
-            rfs = new ReadFromServer(in);
-            wts = new WriteToServer(out);
-            rfs.waitForStartMsg();
+            playerID = in.readInt();
+            System.out.println("You are player #" + playerID);
+            rfsRunnable = new ReadFromServer(in);
+            wtsRunnable = new WriteToServer(out);
+            rfsRunnable.waitForStartMsg();
         }
         catch(IOException e) {
             System.out.println("IOException in connectToServer");
@@ -107,9 +110,7 @@ public class GameFrame implements KeyListener {
     }
 
     public void setGUI() throws IOException{
-        connectToServer();
         createSprites();
-        setUpCoins();
         updateChecker();
         canvas.addPlayers(players);
         frame.setTitle("Final Project - Giron - Olegario");
@@ -272,63 +273,62 @@ public class GameFrame implements KeyListener {
         private DataInputStream dataIn;
         public ReadFromServer(DataInputStream d) {
             dataIn = d;
-            System.out.println("RFS Runnable Created");
-           
-            
+            System.out.println("RFS Runnable created.");
         }
         public void run() {
             try {
-            while (true) {
-                p2x = dataIn.readInt();
-                p2y = dataIn.readInt();
-                if (player2 != null) {
-                    player2.setX(p2x);
-                    player2.setY(p2y);
+                while (true) {
+                    int player2X = dataIn.readInt();
+                    int player2Y = dataIn.readInt();
+                    if (player2 != null) {
+                        player2.setX(player2X);
+                        player2.setY(player2Y);
+                    }
                 }
             }
-        }
         catch(IOException e) {
             System.out.println("IOexception in readFromServer");
         }
         }
         
         public void waitForStartMsg() {
-           // try {}
-                //String startMsg = dataIn.readUTF();
-                    //System.out.println("Message from server: " + startMsg);
-                    Thread read = new Thread(rfs);
-                    read.start();
-                    Thread write = new Thread(wts);
-                    write.start();
+            try {
+                String startMsg = dataIn.readUTF();
+                System.out.println(startMsg);
+                Thread readThread = new Thread(rfsRunnable);
+                Thread writeThread = new Thread(wtsRunnable);
+                readThread.start();
+                writeThread.start();
+            }
+            catch(IOException e) {
+                System.out.println("IOException in waitForStartMsg()");
 
-            //catch(IOException e) {}
-    
-            
-        } 
+            }
+        }
     }
     private class WriteToServer implements Runnable {
         private DataOutputStream dataOut;
         public WriteToServer(DataOutputStream d) {
             dataOut = d;
-            System.out.println("WTS Runnable Created");
-
+            System.out.println("WTS Runnable created.");
         }
         public void run() {
             try {
-            while (true) {
-                if (player1!= null) {
-                    //System.out.println(player1.getName());
-                    dataOut.writeInt(player1.returnX());
-                    dataOut.writeInt(player1.returnY());
-                    dataOut.flush();
-                    //System.out.println(p2x);
-                }
+                while (true) {
+                
+                    if (player1 != null)
+                    {
+
+                    
+                   dataOut.writeInt(player1.returnX());
+                dataOut.writeInt(player1.returnY());
+                dataOut.flush();}
                 try {
                     Thread.sleep(25);
                 }
                 catch(InterruptedException e) {
-                    System.out.println("Interrupted Exception from WTS run");
-                }
+                    System.out.println("Interrupted Exception in WTS");
+                } 
             }
         }
         catch(IOException e) {
