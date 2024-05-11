@@ -31,11 +31,6 @@ public class Enemy implements Objects {
         }
         xSpeed = 2;
         ySpeed = 2;
-        //we should the start the animation once both players are connected
-
-        
-    }
-    public void startThreads() {
         EnemyAnimation enemyAnimation = new EnemyAnimation();
         enemyAnimation.start();
         EnemyMovement enemyMovement = new EnemyMovement();

@@ -34,7 +34,7 @@ public class GameCanvas extends JComponent {
     public GameCanvas() throws IOException, FontFormatException {
         setPreferredSize(new Dimension(800, 600));
         ongoing = true;
-        timeLeft = 200;
+        timeLeft = 5;
         players = new ArrayList<>();
         blocks = new ArrayList<>();
         sc = new ArrayList<>();
@@ -78,11 +78,6 @@ public class GameCanvas extends JComponent {
         //add players from GameFrame
         players = p;
         //System.out.println("Successfully added.");
-    }
-    public void startAnimations() {
-        for (Enemy e: enemies) {
-            e.startThreads();
-        }
     }
 
     @Override
@@ -492,7 +487,7 @@ public class GameCanvas extends JComponent {
     public String winnerCheck()
     {
         int coin1 = players.get(0).coins;
-        int coin2 = players.get(0).coins;
+        int coin2 = players.get(1).coins;
 
         if(coin1 > coin2)
         {
@@ -511,6 +506,7 @@ public class GameCanvas extends JComponent {
 
         return null;
     }
+
     Timer countdownTimer = new Timer(1000, new ActionListener()
     {
         @Override
@@ -520,16 +516,12 @@ public class GameCanvas extends JComponent {
             if(timeLeft <= 0)
             {
                 countdownTimer.stop();
-                count1.setText("");
-                count2.setText("");
-                countdown.setText("");
                 ongoing=false;
                 try {
                     printWinner(winnerCheck());
                 } catch (IOException ex) {
                     throw new RuntimeException(ex);
                 }
-
             }
         }
     });
