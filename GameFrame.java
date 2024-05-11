@@ -112,7 +112,7 @@ public class GameFrame implements KeyListener {
         canvas.setFocusable(true);
         canvas.addKeyListener(this);
         frame.add(canvas, BorderLayout.CENTER);
-        frame.add(button, BorderLayout.SOUTH);
+        //frame.add(button, BorderLayout.SOUTH);
         frame.pack();
         frame.setVisible(true);
         canvas.requestFocusInWindow();

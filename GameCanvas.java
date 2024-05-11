@@ -36,7 +36,7 @@ public class GameCanvas extends JComponent {
     public GameCanvas() throws IOException, FontFormatException, UnsupportedAudioFileException, LineUnavailableException {
         setPreferredSize(new Dimension(800, 600));
         ongoing = true;
-        timeLeft = 5;
+        timeLeft = 200;
         players = new ArrayList<>();
         blocks = new ArrayList<>();
         sc = new ArrayList<>();
@@ -72,9 +72,7 @@ public class GameCanvas extends JComponent {
         player = new SongPlayer();
         addBlocks();
         addEnemies();
-        stars.add(new Star(200, 200));
         player.play(player.BG);
-        statusMusic();
     }
 
     public void addPlayers(ArrayList<Player> p) {
@@ -539,7 +537,7 @@ public class GameCanvas extends JComponent {
         }
     });
 
-    public void statusMusic()
+    /*public void statusMusic()
     {
         Timer statusTimer = new Timer(20, new ActionListener()
         {
@@ -573,7 +571,10 @@ public class GameCanvas extends JComponent {
             }
         });
         statusTimer.start();
+
     }
+
+     */
     public void playStarMusic() throws UnsupportedAudioFileException, LineUnavailableException, IOException
     {
         player.stop();
