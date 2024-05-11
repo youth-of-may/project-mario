@@ -294,6 +294,7 @@ public class GameFrame implements KeyListener {
         public void waitForStartMsg() {
             try {
                 String startMsg = dataIn.readUTF();
+                canvas.startAnimations();
                 System.out.println(startMsg);
                 Thread readThread = new Thread(rfsRunnable);
                 Thread writeThread = new Thread(wtsRunnable);
