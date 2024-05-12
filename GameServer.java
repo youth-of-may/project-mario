@@ -8,7 +8,7 @@ public class GameServer {
   private ServerSocket ss;
   private int numPlayers;
   private int maxPlayers;
-  private int p1X, p2X, p1Y, p2Y;
+  private int p1X, p2X, p1Y, p2Y, p1Coins, p2Coins;
   private Socket p1Socket, p2Socket;
   private ReadFromClient p1ReadRunnable, p2ReadRunnable; //these are inner classes; we did this so it would not mess up the code/processes
   private WriteToClient p1WriteRunnable, p2WriteRunnable;
@@ -20,6 +20,8 @@ public class GameServer {
         p1Y = 50;
         p2X = 300;
         p2Y = 50;
+        p1Coins = 100;
+        p2Coins = 100;
 
         try {
             ss = new ServerSocket(55555);
@@ -89,9 +91,14 @@ private class ReadFromClient implements Runnable{
             if (playerID == 1) {
               p1X = dataIn.readInt();
               p1Y = dataIn.readInt();
+              p1Coins = dataIn.readInt();
+              System.out.println("P1's coins are " + p1Coins);
       }  else {
           p2X = dataIn.readInt();
           p2Y = dataIn.readInt();
+          p2Coins = dataIn.readInt();
+          System.out.println("P2's coins are " + p2Coins);
+          
       }
           }
           
@@ -118,11 +125,14 @@ private class WriteToClient implements Runnable {
               if (playerID == 1) {
                   dataOut.writeInt(p2X);
                   dataOut.writeInt(p2Y);
+                  //dataOut.writeInt(p2Coins);
+                  
                   dataOut.flush();
               }
               else {
                   dataOut.writeInt(p1X);
                   dataOut.writeInt(p1Y);
+                  //dataOut.writeInt(p1Coins);
                   dataOut.flush();
               }
               try {

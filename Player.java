@@ -115,6 +115,12 @@ public class Player implements Objects {
     {
         return coins;
     }
+    public void updateCoins(int c) {
+        coins = c;
+    }
+    public void addCoins() {
+        coins++;
+    }
 
     @Override
     public String returnDirection() {
@@ -133,6 +139,20 @@ public class Player implements Objects {
         xSpeed = 2;
         ySpeed = 2;
         sleep = false;
+    }
+    public void updatePowerUps(boolean shell, boolean star, boolean sleep) {
+        shellUp = shell;
+        starUp = star;
+        sleepUp = sleep;
+    }
+    public boolean shellBoolean (){
+        return shellUp;
+    }
+    public boolean starBoolean (){
+        return starUp;
+    }
+    public boolean sleepBoolean (){
+        return sleepUp;
     }
 
     public void changeIcons()
