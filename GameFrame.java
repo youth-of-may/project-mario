@@ -330,8 +330,8 @@ public class GameFrame implements KeyListener {
             while (true) {
                 if (player1!= null) {
                     for (SilverCoin s : sc) {
-                        
-                        System.out.print(s.returnX() + "," + s.returnY()+ ",");
+                        //to get coords
+                        //System.out.print(s.returnX() + "," + s.returnY()+ ",");
                         
                     }
                     
