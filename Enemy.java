@@ -31,6 +31,8 @@ public class Enemy implements Objects {
         }
         xSpeed = 2;
         ySpeed = 2;
+    }
+    public void startThreads() {
         EnemyAnimation enemyAnimation = new EnemyAnimation();
         enemyAnimation.start();
         EnemyMovement enemyMovement = new EnemyMovement();

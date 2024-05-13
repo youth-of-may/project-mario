@@ -16,15 +16,18 @@ public class GameFrame implements KeyListener {
     private int width;
     private int height;
     private Timer updateTimer;
+    private Timer countdownTimer;
     private JLabel coin1, coin2;
     private JButton button;
     private GameCanvas canvas;
     private ArrayList<Player> players;
+    private ArrayList<Enemy> enemies;
     private Player player1;
     private Player player2;
     private Socket socket;
     private ReadFromServer rfs;
     private WriteToServer wts;
+    
 
 
     public GameFrame(int width, int height) throws IOException, FontFormatException, UnsupportedAudioFileException, LineUnavailableException {
@@ -43,8 +46,10 @@ public class GameFrame implements KeyListener {
 
         //for networking stuff
         players = new ArrayList<>();
-        playerID = 0;
+        playerID = 1;
 
+        enemies = new ArrayList<>();
+        
         /*
         player1 = canvas.getPlayer(0);
         player2 = canvas.getPlayer(1);
@@ -57,18 +62,23 @@ public class GameFrame implements KeyListener {
          * This is for creating players based on the player id/player number
          */
         if (playerID == 1) {
-            player1 = new Player(150, 50, "mario");
-            player2 = new Player(300, 50, "peach");
+            player1 = new Player(75, 50, "mario");
+            player2 = new Player(685, 450, "peach");
 
         }
         else {
-            player1 = new Player(300, 50, "peach");
-            player2 = new Player(150, 50, "mario");
+            player1 = new Player(685, 450, "peach");
+            player2 = new Player(75, 50, "mario");
 
         }
         players.add(player1);
-        players.add(player2);
+        players.add(player2);        
         System.out.println("Players created");
+
+        enemies = canvas.returnEnemy();
+
+        setUpCoins();
+        
     }
     private void setUpCoins() {
         /*
@@ -78,7 +88,7 @@ public class GameFrame implements KeyListener {
         coin2 = new JLabel("Coins: " + player2.coins);
     }
 
-    private void connectToServer() {
+    private void connectToServer() throws IOException, FontFormatException, UnsupportedAudioFileException, LineUnavailableException{
         /*
          * Connecting to server
          */
@@ -88,8 +98,15 @@ public class GameFrame implements KeyListener {
             DataOutputStream out = new DataOutputStream(socket.getOutputStream());
             playerID = in.readInt(); //tells you if you're the first one to connect or what
             System.out.println("You are player#" + playerID);
+
+            createSprites();
+            Timer t = updateChecker();
+
             rfs = new ReadFromServer(in);
             wts = new WriteToServer(out);
+            rfs.waitForStartMsg();
+            t.start();
+            
         }
         catch(IOException e) {
             System.out.println("IOException in connectToServer");
@@ -97,11 +114,12 @@ public class GameFrame implements KeyListener {
         }
     }
 
-    public void setGUI() throws IOException{
+    public void setGUI() throws IOException, FontFormatException, UnsupportedAudioFileException, LineUnavailableException{
+        
         connectToServer();
-        createSprites();
-        setUpCoins();
-        updateChecker();
+        
+        
+        
         canvas.addPlayers(players);
         frame.setTitle("Final Project - Giron - Olegario");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -120,11 +138,25 @@ public class GameFrame implements KeyListener {
 
     private void updateCoinLabel()
     {
-        coin1.setText("Coins: " + player1.coins);
-        coin2.setText("Coins: " + player2.coins);
+        coin1.setText("Coins: " + player1.returnCoins());
+        coin2.setText("Coins: " + player2.returnCoins());
     }
+    /* 
+    public void resetPowerUps() {
+        Timer starTimer = new Timer(500, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ae) {
 
-    public void updateChecker() {
+            }
+        });
+        for (Player p: players) {
+            if (p.starBoolean()) {
+                starTimer.start();
+            }
+        }
+        
+    }*/
+    public Timer updateChecker() {
         updateTimer = new Timer(20, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -141,9 +173,11 @@ public class GameFrame implements KeyListener {
                     {
                         canvas.checkCollisions();
                         canvas.repaint();
+                        //updatePowerups then change icons
                         canvas.players.get(0).changeIcons();
                         canvas.players.get(1).changeIcons();
-                        canvas.updateCoins();
+                        canvas.updateCoins(playerID);
+                        updateCoinLabel();
                     }
                 } catch (UnsupportedAudioFileException ex) {
                     throw new RuntimeException(ex);
@@ -154,7 +188,8 @@ public class GameFrame implements KeyListener {
                 }
             }
         });
-        updateTimer.start();
+        return updateTimer;
+        //updateTimer.start();
     }
 
     public void restartGame()
@@ -245,9 +280,12 @@ public class GameFrame implements KeyListener {
                 if (player2 != null) {
                     int p2x = dataIn.readInt();
                     int p2y = dataIn.readInt();
-                    System.out.println(p2x);
+                    //System.out.println(p2x);
                     player2.setX(p2x);
                     player2.setY(p2y);
+
+                    //player2.updateCoins(dataIn.readInt());
+                    
                 }
             }
         }
@@ -255,8 +293,8 @@ public class GameFrame implements KeyListener {
             System.out.println("IOexception in readFromServer");
         }
         }
-        /*
-        public void waitForStartMsg() {
+        
+        public void waitForStartMsg() throws IOException, FontFormatException, UnsupportedAudioFileException, LineUnavailableException{
             try {
                 String startMsg = dataIn.readUTF();
                     System.out.println("Message from server: " + startMsg);
@@ -264,11 +302,17 @@ public class GameFrame implements KeyListener {
                     read.start();
                     Thread write = new Thread(wts);
                     write.start();
+                    canvas.startCountdown();
+                    canvas.playMusic();
+                    for (Enemy e : enemies) {
+                        e.startThreads();
+                    }
+                    
             }
             catch(IOException e) {
-
+                System.out.println("IOexception in waitForStartMsg");
             }
-        } */
+        } 
     }
     private class WriteToServer implements Runnable {
         private DataOutputStream dataOut;
@@ -281,8 +325,10 @@ public class GameFrame implements KeyListener {
             try {
             while (true) {
                 if (player1!= null) {
+
                     dataOut.writeInt(player1.returnX());
                     dataOut.writeInt(player1.returnY());
+                    dataOut.writeInt(player1.returnCoins());
                     dataOut.flush();
                 }
                 try {

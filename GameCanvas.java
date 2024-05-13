@@ -68,11 +68,17 @@ public class GameCanvas extends JComponent {
         add(count1);
         add(count2);
         add(countdown);
-        countdownTimer.start();
+        //countdownTimer.start();
         player = new SongPlayer();
+        
         addBlocks();
         addEnemies();
+
         stars.add(new Star(200,200));
+
+        
+    }
+    public void playMusic() throws IOException, FontFormatException, UnsupportedAudioFileException, LineUnavailableException{
         player.play(player.BG);
         StatusMusic statusMusic = new StatusMusic();
         statusMusic.start();
@@ -83,7 +89,16 @@ public class GameCanvas extends JComponent {
         players = p;
         //System.out.println("Successfully added.");
     }
-
+    public ArrayList<Enemy> returnEnemy() {
+        return enemies;
+    }
+    public ArrayList<SilverCoin> returnSC (){
+        return sc;
+    }
+    public void startCountdown () {
+        countdownTimer.start();
+        
+    }
     @Override
     public void paintComponent(Graphics g) {
         Graphics2D g2d = (Graphics2D) g;
@@ -146,6 +161,7 @@ public class GameCanvas extends JComponent {
 
     public void checkCollisions() throws UnsupportedAudioFileException, LineUnavailableException, IOException {
         for (Player player : players) {
+            //player.updatePowerUps(false, false, false);
             for (Block block : blocks) {
                 if (player.blockCollision(block)) {
                     player.doBlockCollision(blocks);
@@ -156,7 +172,8 @@ public class GameCanvas extends JComponent {
             while (iterator1.hasNext()) {
                 SilverCoin coin = iterator1.next();
                 if (player.scCollision(coin)) {
-                    player.doSCCollision(coin);
+                    //player.doSCCollision(coin);
+                    player.addCoins();
                     iterator1.remove();
                 }
             }
@@ -171,6 +188,7 @@ public class GameCanvas extends JComponent {
             while (iterator2.hasNext()) {
                 Star star = iterator2.next();
                 if (player.starCollision(star)) {
+                    player.updatePowerUps(false, true, false);
                     player.doStarCollision(star);
                     iterator2.remove();
                 }
@@ -182,6 +200,7 @@ public class GameCanvas extends JComponent {
                 if (player.sleepCollision(sleep)) {
                     player.doSleepCollision(sleep,
                             players);
+                            player.updatePowerUps(false, false, true);
                     iterator3.remove();
                 }
             }
@@ -191,6 +210,7 @@ public class GameCanvas extends JComponent {
                 Shell shell = iterator4.next();
                 if (player.shellCollision(shell)) {
                     player.doShellCollision(shell);
+                    player.updatePowerUps(true, false, false);
                     iterator4.remove();
                 }
             }
@@ -284,9 +304,16 @@ public class GameCanvas extends JComponent {
         enemies.add(new Enemy(570, 170, "left", false));
     }
 
-    public void updateCoins() {
+    public void updateCoins(int playerID) {
+        if (playerID== 1) {
         count1.setText(String.valueOf(players.get(0).coins));
         count2.setText(String.valueOf(players.get(1).coins));
+        }
+        else {
+        count2.setText(String.valueOf(players.get(0).coins));
+        count1.setText(String.valueOf(players.get(1).coins));
+        }
+        
     }
 
     public void printWinner(String name) throws IOException {
