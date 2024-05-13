@@ -46,12 +46,12 @@ public class SilverCoin implements Objects
 
     @Override
     public int returnX() {
-        return 0;
+        return x;
     }
 
     @Override
     public int returnY() {
-        return 0;
+        return y;
     }
 
     @Override

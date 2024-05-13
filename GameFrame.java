@@ -22,6 +22,7 @@ public class GameFrame implements KeyListener {
     private GameCanvas canvas;
     private ArrayList<Player> players;
     private ArrayList<Enemy> enemies;
+    private ArrayList<SilverCoin> sc; 
     private Player player1;
     private Player player2;
     private Socket socket;
@@ -49,6 +50,7 @@ public class GameFrame implements KeyListener {
         playerID = 1;
 
         enemies = new ArrayList<>();
+        sc = new ArrayList<>();
         
         /*
         player1 = canvas.getPlayer(0);
@@ -76,6 +78,8 @@ public class GameFrame implements KeyListener {
         System.out.println("Players created");
 
         enemies = canvas.returnEnemy();
+        sc = canvas.returnSC();
+        
 
         setUpCoins();
         
@@ -325,7 +329,12 @@ public class GameFrame implements KeyListener {
             try {
             while (true) {
                 if (player1!= null) {
-
+                    for (SilverCoin s : sc) {
+                        
+                        System.out.print(s.returnX() + "," + s.returnY()+ ",");
+                        
+                    }
+                    
                     dataOut.writeInt(player1.returnX());
                     dataOut.writeInt(player1.returnY());
                     dataOut.writeInt(player1.returnCoins());

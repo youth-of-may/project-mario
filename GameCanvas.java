@@ -407,7 +407,7 @@ public class GameCanvas extends JComponent {
         }
 
         public void generateCoins() {
-            for (int i = 0; i < 10; i++) {
+            for (int i = 0; sc.size() < 10; i++) {
                 int objectX = (int) (Math.random() * (maxX - minX)) + minX;
                 int objectY = (int) (Math.random() * (maxY - minY)) + minY;
                 try {
