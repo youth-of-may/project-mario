@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
+
 public class Player implements Objects {
     int x, y, xSpeed, ySpeed, width, height, imageX, imageY, coins;
     String name, direction, imagePath;
@@ -15,6 +16,8 @@ public class Player implements Objects {
     StarTracker starTracker;
     ShellTracker shellTracker;
     SleepTracker sleepTracker;
+
+
 
 
     public Player(int x, int y, String name) throws IOException {
@@ -51,6 +54,7 @@ public class Player implements Objects {
         spriteSheet = ImageIO.read(new File(imagePath));
     }
 
+
     @Override
     public void draw(Graphics2D g2d) {
         RenderingHints rh = new RenderingHints(
@@ -64,6 +68,7 @@ public class Player implements Objects {
         // Draw standing frame
         g2d.drawImage(spriteSheet.getSubimage(imageX, imageY, width, height), x, y, null);
     }
+
 
     public void adjustX() {
         if (direction.equals("right"))
@@ -85,20 +90,25 @@ public class Player implements Objects {
             y -= ySpeed;
     }
 
+
     @Override
     public int returnX() {
         return x;
     }
+
 
     @Override
     public int returnY() {
         return y;
     }
 
+
     @Override
     public void returnStatus() {
 
+
     }
+
 
     public String checkStatus() {
         if(starUp)
@@ -109,15 +119,19 @@ public class Player implements Objects {
             return "normal";
     }
 
+
     @Override
     public void changeStatus() {
 
+
     }
+
 
     @Override
     public void changeDirection(String direction) {
         this.direction = direction;
     }
+
 
     @Override
     public int returnCoins()
@@ -125,10 +139,12 @@ public class Player implements Objects {
         return coins;
     }
 
+
     @Override
     public String returnDirection() {
         return direction;
     }
+
 
     public void sleep()
     {
@@ -137,12 +153,14 @@ public class Player implements Objects {
         sleep = true;
     }
 
+
     public void wakeUp()
     {
         xSpeed = 2;
         ySpeed = 2;
         sleep = false;
     }
+
 
     public void changeIcons()
     {
@@ -152,10 +170,14 @@ public class Player implements Objects {
             shellTracker.imageX = 0;
 
 
+
+
         if(starUp)
             starTracker.imageX = 30;
         else
             starTracker.imageX = 0;
+
+
 
 
         if(sleepUp)
@@ -164,12 +186,14 @@ public class Player implements Objects {
             sleepTracker.imageX = 0;
     }
 
+
     public boolean playerCollision(Player other)
     {
         boolean horizontalCollision = this.x < other.x + other.width && this.x + this.width > other.x;
         boolean verticalCollision = this.y < other.y + other.height && this.y + this.height > other.y;
         return horizontalCollision && verticalCollision;
     }
+
 
     public void doPlayerCollision(Player other) throws UnsupportedAudioFileException, LineUnavailableException, IOException {
         if (other != this && playerCollision(other))
@@ -191,9 +215,13 @@ public class Player implements Objects {
                 hurtMusic.start();
 
 
+
+
             }
 
+
             if(starUp && other.coins > 0 && !other.hurt)
+
 
             {
                 other.hurt = true;
@@ -219,6 +247,7 @@ public class Player implements Objects {
         return horizontalCollision && verticalCollision;
     }
 
+
     public void doEnemyCollision(Enemy other) throws UnsupportedAudioFileException, LineUnavailableException, IOException {
         if (enemyCollision(other) && !hurt && !starUp)
         {
@@ -233,12 +262,14 @@ public class Player implements Objects {
         }
     }
 
+
     public boolean shellCollision(Shell other)
     {
         boolean horizontalCollision = this.x < other.x + other.width && this.x + this.width > other.x;
         boolean verticalCollision = this.y < other.y + other.height && this.y + this.height > other.y;
         return horizontalCollision && verticalCollision;
     }
+
 
     public void doShellCollision(Shell other) throws IOException {
         if(shellCollision(other) && !shellUp)
@@ -249,12 +280,14 @@ public class Player implements Objects {
         }
     }
 
+
     public boolean sleepCollision(Sleep other)
     {
         boolean horizontalCollision = this.x < other.x + other.width && this.x + this.width > other.x;
         boolean verticalCollision = this.y < other.y + other.height && this.y + this.height > other.y;
         return horizontalCollision && verticalCollision;
     }
+
 
     public void doSleepCollision(Sleep other, ArrayList<Player> players)
     {
@@ -270,6 +303,7 @@ public class Player implements Objects {
                     SleepTimer sleepTimer = new SleepTimer(players);
                     sleepTimer.start();
 
+
                 }
             }
         }
@@ -280,6 +314,7 @@ public class Player implements Objects {
         boolean verticalCollision = this.y < other.y + other.height && this.y + this.height > other.y;
         return horizontalCollision && verticalCollision;
     }
+
 
     public void doStarCollision(Star other) throws UnsupportedAudioFileException, LineUnavailableException, IOException {
         if (starCollision(other))
@@ -294,12 +329,14 @@ public class Player implements Objects {
         }
     }
 
+
     public boolean projectileCollision(ShellProjectile other)
     {
         boolean horizontalCollision = this.x < other.x + other.width && this.x + this.width > other.x;
         boolean verticalCollision = this.y < other.y + other.height && this.y + this.height > other.y;
         return horizontalCollision && verticalCollision;
     }
+
 
     public void doProjectileCollision(ArrayList<ShellProjectile> shells, ArrayList<Player> players) throws UnsupportedAudioFileException, LineUnavailableException, IOException {
         for (Player player : players)
@@ -322,6 +359,8 @@ public class Player implements Objects {
     }
 
 
+
+
     public void shootShell() throws IOException, UnsupportedAudioFileException, LineUnavailableException {
         if(shellUp)
         {
@@ -335,11 +374,13 @@ public class Player implements Objects {
         }
     }
 
+
     public boolean blockCollision(Block other) {
         boolean horizontalCollision = this.x < other.x + other.width && this.x + this.width > other.x;
         boolean verticalCollision = this.y < other.y + other.height && this.y + this.height > other.y;
         return horizontalCollision && verticalCollision;
     }
+
 
     public void doBlockCollision(ArrayList<Block> blocks) {
         boolean collided = false;
@@ -347,16 +388,19 @@ public class Player implements Objects {
             boolean horizontalCollision = false;
             boolean verticalCollision = false;
 
+
             if (blockCollision(other)) {
                 collided = true;
                 int dx = x + width / 2 - (other.x + other.width / 2);
                 int dy = y + height / 2 - (other.y + other.height / 2);
+
 
                 if (Math.abs(dx) > Math.abs(dy)) {
                     horizontalCollision = true;
                 } else {
                     verticalCollision = true;
                 }
+
 
                 if (horizontalCollision) {
                     if (x < other.x) {
@@ -369,6 +413,7 @@ public class Player implements Objects {
                     xSpeed = 2;
                 }
 
+
                 if (verticalCollision) {
                     if (y < other.y) {
                         y = other.y - height;
@@ -380,17 +425,21 @@ public class Player implements Objects {
                     ySpeed = 2;
                 }
 
+
                 collided = false;
+
 
                 break;
             }
         }
+
 
         if (!collided) {
             xSpeed = 2;
             ySpeed = 2;
         }
     }
+
 
     public boolean scCollision(SilverCoin other)
     {
@@ -399,12 +448,14 @@ public class Player implements Objects {
         return horizontalCollision && verticalCollision;
     }
 
+
     public void doSCCollision(SilverCoin other)
     {
         if (scCollision(other)) {
             coins += 1;
         }
     }
+
 
     private class StarTimer extends Thread
     {
@@ -419,8 +470,10 @@ public class Player implements Objects {
         }
     }
 
+
     private class HurtTimer extends Thread {
         private Player player;
+
 
         public HurtTimer(Player player)
         {
@@ -436,6 +489,7 @@ public class Player implements Objects {
             }
         }
     }
+
 
     private class SleepTimer extends Thread {
         private ArrayList<Player> players;
@@ -457,13 +511,16 @@ public class Player implements Objects {
         }
     }
 
+
     private class HurtAnimation extends Thread
     {
         private Player player;
 
+
         public HurtAnimation(Player player) {
             this.player = player;
         }
+
 
         @Override
         public void run()
@@ -483,9 +540,11 @@ public class Player implements Objects {
         }
     }
 
+
     private class SleepAnimation extends Thread
     {
         private Player player;
+
 
         public SleepAnimation(Player player)
         {
@@ -507,6 +566,7 @@ public class Player implements Objects {
         }
     }
 
+
     private class ShellAnimation extends Thread
     {
         @Override
@@ -527,6 +587,7 @@ public class Player implements Objects {
             imageX = 0;
         }
     }
+
 
     private class StarAnimation extends Thread
     {
@@ -553,11 +614,14 @@ public class Player implements Objects {
     }
 
 
+
+
     public class ShellProjectile implements Objects
     {
         int x, y, width, height;
         String imagePath1;
         BufferedImage myPicture1;
+
 
         public ShellProjectile(int x, int y) throws IOException {
             this.x = x;
@@ -567,6 +631,7 @@ public class Player implements Objects {
             imagePath1 = "GameSprites/SHELL.png";
             myPicture1 = ImageIO.read(new File(imagePath1));
         }
+
 
         public void draw(Graphics2D g2d)
         {
@@ -581,50 +646,64 @@ public class Player implements Objects {
             g2d.drawImage(myPicture1, x, y, null);
         }
 
+
         @Override
         public void adjustX() {
 
+
         }
+
 
         @Override
         public void adjustY() {
 
+
         }
+
 
         @Override
         public int returnX() {
             return 0;
         }
 
+
         @Override
         public int returnY() {
             return 0;
         }
+
 
         @Override
         public void returnStatus()
         {
         }
 
+
         @Override
         public void changeStatus() {
 
+
         }
+
 
         @Override
         public String returnDirection() {
             return null;
         }
 
+
         @Override
         public void changeDirection(String direction) {
 
+
         }
+
 
         @Override
         public int returnCoins() {
             return 0;
         }
+
 
         public class ShellAnimation extends Thread
         {
@@ -651,11 +730,13 @@ public class Player implements Objects {
                     }
                 }
 
+
                 if(!Player.this.shellProjectiles.isEmpty())
                     shellProjectiles.remove(ShellProjectile.this);
             }
         }
     }
+
 
     private class StarMusic extends Thread
     {
@@ -675,6 +756,7 @@ public class Player implements Objects {
         }
     }
 
+
     private class HurtMusic extends Thread
     {
         File file;
@@ -692,6 +774,7 @@ public class Player implements Objects {
             clip.start();
         }
     }
+
 
     private class ShellMusic extends Thread
     {
@@ -711,11 +794,13 @@ public class Player implements Objects {
         }
     }
 
+
     public class StarTracker implements Objects
     {
         int x, y, imageX, imageY, width, height;
         String imagePath1;
         BufferedImage myPicture1;
+
 
         public StarTracker(int x, int y) throws IOException
         {
@@ -729,6 +814,7 @@ public class Player implements Objects {
             myPicture1 = ImageIO.read(new File(imagePath1));
         }
 
+
         @Override
         public void draw(Graphics2D g2d)
         {
@@ -743,45 +829,59 @@ public class Player implements Objects {
             g2d.drawImage(myPicture1.getSubimage(imageX, imageY, width, height), x, y, null);
         }
 
+
         @Override
         public void adjustX() {
 
+
         }
+
 
         @Override
         public void adjustY() {
 
+
         }
+
 
         @Override
         public int returnX() {
             return 0;
         }
 
+
         @Override
         public int returnY() {
             return 0;
         }
 
+
         @Override
         public void returnStatus() {
 
+
         }
+
 
         @Override
         public void changeStatus() {
 
+
         }
+
 
         @Override
         public String returnDirection() {
             return null;
         }
 
+
         @Override
         public void changeDirection(String direction) {
 
+
         }
+
 
         @Override
         public int returnCoins() {
@@ -789,11 +889,13 @@ public class Player implements Objects {
         }
     }
 
+
     public class ShellTracker implements Objects
     {
         int x, y, imageX, imageY, width, height;
         String imagePath1;
         BufferedImage myPicture1;
+
 
         public ShellTracker(int x, int y) throws IOException
         {
@@ -807,6 +909,7 @@ public class Player implements Objects {
             myPicture1 = ImageIO.read(new File(imagePath1));
         }
 
+
         @Override
         public void draw(Graphics2D g2d)
         {
@@ -819,44 +922,57 @@ public class Player implements Objects {
             g2d.drawImage(myPicture1.getSubimage(imageX, imageY, width, height), x, y, null);
         }
 
+
         @Override
         public void adjustX() {
 
+
         }
+
 
         @Override
         public void adjustY() {
 
+
         }
+
 
         @Override
         public int returnX() {
             return 0;
         }
 
+
         @Override
         public int returnY() {
             return 0;
         }
 
+
         @Override
         public void returnStatus() {
         }
 
+
         @Override
         public void changeStatus() {
 
+
         }
+
 
         @Override
         public String returnDirection() {
             return null;
         }
 
+
         @Override
         public void changeDirection(String direction) {
 
+
         }
+
 
         @Override
         public int returnCoins() {
@@ -864,11 +980,13 @@ public class Player implements Objects {
         }
     }
 
+
     public class SleepTracker implements Objects
     {
         int x, y, imageX, imageY, width, height;
         String imagePath1;
         BufferedImage myPicture1;
+
 
         public SleepTracker(int x, int y) throws IOException
         {
@@ -881,6 +999,7 @@ public class Player implements Objects {
             imagePath1 = "GameSprites/SLEEPTRACKER.png";
             myPicture1 = ImageIO.read(new File(imagePath1));
         }
+
 
         @Override
         public void draw(Graphics2D g2d)
@@ -896,53 +1015,75 @@ public class Player implements Objects {
             g2d.drawImage(myPicture1.getSubimage(imageX, imageY, width, height), x, y, null);
         }
 
+
         @Override
         public void adjustX() {
 
+
         }
+
 
         @Override
         public void adjustY() {
 
+
         }
+
 
         @Override
         public int returnX() {
             return 0;
         }
 
+
         @Override
         public int returnY() {
             return 0;
         }
 
+
         @Override
         public void returnStatus() {
         }
 
+
         @Override
         public void changeStatus() {
 
+
         }
+
 
         @Override
         public String returnDirection() {
             return null;
         }
 
+
         @Override
         public void changeDirection(String direction) {
 
+
         }
+
 
         @Override
         public int returnCoins() {
             return 0;
         }
 
+
     }
 
 
+
+
 }
+
+
+
+
+
+
 
 
