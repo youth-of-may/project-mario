@@ -40,7 +40,7 @@ public class GameServer {
         coinLocation3 = "108,154,393,79,421,242,120,69,141,211,68,116,219,101,482,259,617,245,289,250";
         coinLocation4 = "451,200,544,211,356,236,601,192,577,247,60,149,537,313,591,360,134,320,620,369";
         coinLocation5 = "380,99,563,276,382,158,242,364,522,130,347,215,617,240,266,432,165,218,311,143";
-        coinLocation6 = "417,115,539,378,545,132,569,314,262,351,131,66,463,307,57,219,257,395";
+        coinLocation6 = "417,115,539,378,545,132,569,314,262,351,131,66,463,307,57,219,257,395,575,194";
         coinLocation7 = "300,187,354,90,383,134,275,323,322,292,249,68,488,280,392,178,537,228,680,190";
         coinLocation8 = "173,327,455,325,628,276,331,132,389,301,523,157,620,201,376,396,201,340,78,279";
         coinLocation9 = "591,80,446,267,565,180,422,111,256,54,273,431,430,234,568,375,441,337,597,429";
@@ -152,6 +152,24 @@ private class ReadFromClient implements Runnable{
 
 
   }
+  public void checkCollisions() {
+    if (counter !=-1){
+
+    
+    String[] temp = coinCollection[counter].split(",");
+    //use loop from GameCanvas check if x coordinate matches with p1x or p2x if yes then check y if match pa rin then set both equal to -1
+    for (int i = 0; i < 19; i+=2) {
+        if (Integer.parseInt(temp[i]) == p1X || Integer.parseInt(temp[i] )== p2X) {
+            if (Integer.parseInt(temp[i+1]) == p1Y || Integer.parseInt(temp[i+1] )== p2Y) {
+                temp[i] = "-1";
+                temp[i + 1] = "-1";
+            }
+        }
+    }
+    coinCollection[counter] = String.join(",", temp);
+    
+}
+  }
   public void run() {
       try {
           while (true) {
@@ -167,6 +185,7 @@ private class ReadFromClient implements Runnable{
           //System.out.println("P2's coins are " + p2Coins);
           
       }
+      checkCollisions();
           }
           
       
@@ -186,6 +205,7 @@ private class WriteToClient implements Runnable {
       System.out.println("WTC " + playerID + " Runnable created.");
 
   }
+  
   public void run() {
       try {
           while (true) {

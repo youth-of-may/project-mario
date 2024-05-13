@@ -422,8 +422,11 @@ public class GameCanvas extends JComponent {
 
                
                 for (int i = 0; i < 19; i+=2) {
+                if (Integer.parseInt(coinCoordinates[i]) != -1) 
+                {
                 SilverCoin coin = new SilverCoin(Integer.parseInt(coinCoordinates[i]), Integer.parseInt(coinCoordinates[i+1]));
                 sc.add(coin); 
+            }
             }
             }
             }
