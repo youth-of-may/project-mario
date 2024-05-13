@@ -28,6 +28,8 @@ public class GameFrame implements KeyListener {
     private Socket socket;
     private ReadFromServer rfs;
     private WriteToServer wts;
+    private String coinLocation;
+    
     
 
 
@@ -51,6 +53,7 @@ public class GameFrame implements KeyListener {
 
         enemies = new ArrayList<>();
         sc = new ArrayList<>();
+        coinLocation = "";
         
         /*
         player1 = canvas.getPlayer(0);
@@ -282,6 +285,10 @@ public class GameFrame implements KeyListener {
             try {
             while (true) {
                 if (player2 != null) {
+                    if (dataIn.readBoolean()) {
+                        coinLocation = dataIn.readUTF();
+                        canvas.passCoinLocation(coinLocation);
+                    }
                     int p2x = dataIn.readInt();
                     int p2y = dataIn.readInt();
                     //System.out.println(p2x);

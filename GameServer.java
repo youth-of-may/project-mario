@@ -13,12 +13,14 @@ public class GameServer {
   private ServerSocket ss;
   private int numPlayers;
   private int maxPlayers;
-  private int timeLeft;
+  private int timeLeft, counter;
   private int p1X, p2X, p1Y, p2Y, p1Coins, p2Coins;
   private Socket p1Socket, p2Socket;
   private ReadFromClient p1ReadRunnable, p2ReadRunnable; //these are inner classes; we did this so it would not mess up the code/processes
   private WriteToClient p1WriteRunnable, p2WriteRunnable;
-  private String coinLocation1, coinLocation2, coinLocation3,coinLocation4, coinLocation5, coinLocation6, coinLocation7, coinLocation8, coinLocation9, coinLocation10, coinLocation11, coinLocation12, coinLocation13;
+  private String coinLocation0, coinLocation1, coinLocation2, coinLocation3,coinLocation4, coinLocation5, coinLocation6, coinLocation7, coinLocation8, coinLocation9, coinLocation10, coinLocation11, coinLocation12;
+  private String[] coinCollection;
+  private ObjectGenerator obj; 
   public GameServer() {
     System.out.println("=== GAME SERVER ===");
         numPlayers = 0;
@@ -30,21 +32,40 @@ public class GameServer {
         p1Coins = 100;
         p2Coins = 100;
         timeLeft = 200;
+        counter = -1;
 
-        coinLocation1 = "575,194,267,396,283,362,86,428,200,142,86,149,52,122,271,60,188,69,79,201";
-        coinLocation2 = "268,256,572,395,64,246,402,93,635,376,332,358,389,261,604,204,517,337,521,76";
-        coinLocation3 = "664,59,536,332,566,243,253,347,615,434,127,438,428,129,233,139,59,320,129,73";
-        coinLocation4 = "108,154,393,79,421,242,120,69,141,211,68,116,219,101,482,259,617,245,289,250";
-        coinLocation5 = "451,200,544,211,356,236,601,192,577,247,60,149,537,313,591,360,134,320,620,369";
-        coinLocation6 = "380,99,563,276,382,158,242,364,522,130,347,215,617,240,266,432,165,218,311,143";
-        coinLocation7 = "417,115,539,378,545,132,569,314,262,351,131,66,463,307,57,219,257,395";
-        coinLocation8 = "300,187,354,90,383,134,275,323,322,292,249,68,488,280,392,178,537,228,680,190";
-        coinLocation9 = "173,327,455,325,628,276,331,132,389,301,523,157,620,201,376,396,201,340,78,279";
-        coinLocation10 = "591,80,446,267,565,180,422,111,256,54,273,431,430,234,568,375,441,337,597,429";
-        coinLocation11 = "437,158,240,198,82,434,437,82,355,147,144,203,557,401,516,197,695,131,132,434";
-        coinLocation12 = "385,110,198,349,451,321,680,447,211,140,275,254,111,401,331,221,509,306";
-        coinLocation13 = "59,120,536,194,424,404,444,441,405,295,498,130,358,310,75,87,434,322,321,159";
+        coinLocation0 = "575,194,267,396,283,362,86,428,200,142,86,149,52,122,271,60,188,69,79,201";
+        coinLocation1 = "268,256,572,395,64,246,402,93,635,376,332,358,389,261,604,204,517,337,521,76";
+        coinLocation2 = "664,59,536,332,566,243,253,347,615,434,127,438,428,129,233,139,59,320,129,73";
+        coinLocation3 = "108,154,393,79,421,242,120,69,141,211,68,116,219,101,482,259,617,245,289,250";
+        coinLocation4 = "451,200,544,211,356,236,601,192,577,247,60,149,537,313,591,360,134,320,620,369";
+        coinLocation5 = "380,99,563,276,382,158,242,364,522,130,347,215,617,240,266,432,165,218,311,143";
+        coinLocation6 = "417,115,539,378,545,132,569,314,262,351,131,66,463,307,57,219,257,395";
+        coinLocation7 = "300,187,354,90,383,134,275,323,322,292,249,68,488,280,392,178,537,228,680,190";
+        coinLocation8 = "173,327,455,325,628,276,331,132,389,301,523,157,620,201,376,396,201,340,78,279";
+        coinLocation9 = "591,80,446,267,565,180,422,111,256,54,273,431,430,234,568,375,441,337,597,429";
+        coinLocation10 = "437,158,240,198,82,434,437,82,355,147,144,203,557,401,516,197,695,131,132,434";
+        coinLocation11 = "385,110,198,349,451,321,680,447,211,140,275,254,111,401,331,221,509,306";
+        coinLocation12 = "59,120,536,194,424,404,444,441,405,295,498,130,358,310,75,87,434,322,321,159";
 
+        coinCollection = new String[13];
+        coinCollection[0] = coinLocation0;
+        coinCollection[1] = coinLocation1;
+        coinCollection[2] = coinLocation2;
+        coinCollection[3] = coinLocation3;
+        coinCollection[4] = coinLocation4;
+        coinCollection[5] = coinLocation5;
+        coinCollection[6] = coinLocation6;
+        coinCollection[7] = coinLocation7;
+        coinCollection[8] = coinLocation8;
+        coinCollection[9] = coinLocation9;
+        coinCollection[10] = coinLocation10;
+        coinCollection[11] = coinLocation11;
+        coinCollection[12] = coinLocation12;
+
+        obj = new ObjectGenerator();
+        obj.start();
+        
         
         // CopyOnWriteArrayList
         // manual fields, 10 coin fields
@@ -100,6 +121,26 @@ public void acceptConnections() {
       System.out.println("IOexception from acceptConnections");
   }
 }
+public void generateCoins() {
+   
+}
+public class ObjectGenerator extends Thread {
+    //private Timer powerUpTimer;
+    private Timer coinTimer;
+    
+    public void run() {
+        Timer coinTimer = new Timer(15000, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                counter++;
+                System.out.println(counter);
+                
+            }
+        });
+        coinTimer.start();
+    }
+
+}
 private class ReadFromClient implements Runnable{
   private int playerID;
   private DataInputStream dataIn;
@@ -118,12 +159,12 @@ private class ReadFromClient implements Runnable{
               p1X = dataIn.readInt();
               p1Y = dataIn.readInt();
               p1Coins = dataIn.readInt();
-              System.out.println("P1's coins are " + p1Coins);
+              //System.out.println("P1's coins are " + p1Coins);
       }  else {
           p2X = dataIn.readInt();
           p2Y = dataIn.readInt();
           p2Coins = dataIn.readInt();
-          System.out.println("P2's coins are " + p2Coins);
+          //System.out.println("P2's coins are " + p2Coins);
           
       }
           }
@@ -149,6 +190,11 @@ private class WriteToClient implements Runnable {
       try {
           while (true) {
               if (playerID == 1) {
+                dataOut.writeBoolean(counter !=-1);
+                if (counter !=-1) {
+                    dataOut.writeUTF(coinCollection[counter]);
+                }
+                
                   dataOut.writeInt(p2X);
                   dataOut.writeInt(p2Y);
                   //dataOut.writeInt(p2Coins);
@@ -161,6 +207,11 @@ private class WriteToClient implements Runnable {
                   dataOut.flush();
               }
               else {
+                //Sending boolean?
+                dataOut.writeBoolean(counter !=-1);
+                if (counter !=-1) {
+                    dataOut.writeUTF(coinCollection[counter]);
+                }
                   dataOut.writeInt(p1X);
                   dataOut.writeInt(p1Y);
                   //dataOut.writeInt(p1Coins);

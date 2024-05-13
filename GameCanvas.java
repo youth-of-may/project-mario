@@ -30,6 +30,9 @@ public class GameCanvas extends JComponent {
     TimerImage timer;
     JLabel count1, count2, countdown;
     SongPlayer player;
+    String coinLocation;
+    String[] coinCoordinates;
+    int length;
 
 
 
@@ -75,8 +78,16 @@ public class GameCanvas extends JComponent {
         addEnemies();
 
         stars.add(new Star(200,200));
-
+        coinLocation = "";
+        coinCoordinates = new String[20];
+        length = 0;
         
+    }
+    public void passCoinLocation(String loc) {
+        coinLocation = loc;
+        coinCoordinates = coinLocation.split(",");
+        length = coinLocation.split(",").length;
+        //System.out.println("Successfully passed");
     }
     public void playMusic() throws IOException, FontFormatException, UnsupportedAudioFileException, LineUnavailableException{
         player.play(player.BG);
@@ -405,7 +416,22 @@ public class GameCanvas extends JComponent {
 
             }
         }
+        public void generateCoins() {
+            try {
+                if (length ==20) {
 
+               
+                for (int i = 0; i < 19; i+=2) {
+                SilverCoin coin = new SilverCoin(Integer.parseInt(coinCoordinates[i]), Integer.parseInt(coinCoordinates[i+1]));
+                sc.add(coin); 
+            }
+            }
+            }
+            catch(IOException e) {
+                System.out.println("IOException in generateCoins()");
+            }
+        }
+/*
         public void generateCoins() {
             for (int i = 0; sc.size() < 10; i++) {
                 int objectX = (int) (Math.random() * (maxX - minX)) + minX;
@@ -419,7 +445,7 @@ public class GameCanvas extends JComponent {
                 }
             }
         }
-
+ */
         public void stopTimer() {
             if (powerUpTimer != null) {
                 powerUpTimer.stop();
