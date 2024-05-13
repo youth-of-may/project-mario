@@ -7,11 +7,13 @@ import java.util.Random;
 public class SongPlayer
 {
     String status;
+    boolean playStar, playHurt;
     Song currentSong;
 
     Song STAR = new Song("Music/STAR.wav", "Star");
     Song BG = new Song("Music/BG.wav", "BG");
     Song CLEAR = new Song("Music/CLEAR.wav", "BG");
+    Song HURT = new Song("Music/HURT.wav", "HURT");
 
     /**
      Constructor sets everything into default mode and initializes the arraylist.
@@ -19,6 +21,8 @@ public class SongPlayer
     public SongPlayer() throws UnsupportedAudioFileException, LineUnavailableException, IOException
     {
         status = "STOP";
+        playStar = false;
+        playHurt = false;
     }
 
     /**
@@ -29,14 +33,23 @@ public class SongPlayer
     /**
      Play starts to play the current song that is selected randomly
      */
-    public void play(Song song) throws LineUnavailableException, IOException, UnsupportedAudioFileException {
+    public void play(Song song) throws LineUnavailableException, IOException, UnsupportedAudioFileException
+    {
         if(status.equals("STOP"))
         {
             currentSong = song;
+            if (song.equals(STAR))
+                playStar = true;
             song.play();
             status = "START";
-
         }
+
+    }
+
+    public void sneakyPlay(Song song) throws UnsupportedAudioFileException, LineUnavailableException, IOException {
+        if (song.equals(HURT))
+            playHurt = true;
+        song.play();
     }
 
     /**

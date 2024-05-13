@@ -219,6 +219,10 @@ public class GameFrame implements KeyListener {
                 player1.shootShell();
             } catch (IOException ex) {
                 throw new RuntimeException(ex);
+            } catch (UnsupportedAudioFileException ex) {
+                throw new RuntimeException(ex);
+            } catch (LineUnavailableException ex) {
+                throw new RuntimeException(ex);
             }
             canvas.repaint();
             updateCoinLabel();

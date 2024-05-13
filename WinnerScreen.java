@@ -55,8 +55,8 @@ public class WinnerScreen implements Objects
     }
 
     @Override
-    public String returnStatus() {
-        return null;
+    public void returnStatus() {
+
     }
 
     @Override

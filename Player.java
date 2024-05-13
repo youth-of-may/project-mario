@@ -96,8 +96,17 @@ public class Player implements Objects {
     }
 
     @Override
-    public String returnStatus() {
-        return null;
+    public void returnStatus() {
+
+    }
+
+    public String checkStatus() {
+        if(starUp)
+            return "star";
+        else if(hurt)
+            return "hurt";
+        else
+            return "normal";
     }
 
     @Override
@@ -162,8 +171,7 @@ public class Player implements Objects {
         return horizontalCollision && verticalCollision;
     }
 
-    public void doPlayerCollision(Player other)
-    {
+    public void doPlayerCollision(Player other) throws UnsupportedAudioFileException, LineUnavailableException, IOException {
         if (other != this && playerCollision(other))
         {
             if(other.starUp && coins > 0 && !hurt)
@@ -179,6 +187,9 @@ public class Player implements Objects {
                 hurtTimer.start();
                 HurtAnimation hurtAnimation = new HurtAnimation(this);
                 hurtAnimation.start();
+                HurtMusic hurtMusic = new HurtMusic();
+                hurtMusic.start();
+
 
             }
 
@@ -196,6 +207,8 @@ public class Player implements Objects {
                 hurtTimer.start();
                 HurtAnimation hurtAnimation = new HurtAnimation(other);
                 hurtAnimation.start();
+                HurtMusic hurtMusic = new HurtMusic();
+                hurtMusic.start();
             }
         }
     }
@@ -206,8 +219,7 @@ public class Player implements Objects {
         return horizontalCollision && verticalCollision;
     }
 
-    public void doEnemyCollision(Enemy other)
-    {
+    public void doEnemyCollision(Enemy other) throws UnsupportedAudioFileException, LineUnavailableException, IOException {
         if (enemyCollision(other) && !hurt && !starUp)
         {
             coins -= 1;
@@ -216,6 +228,8 @@ public class Player implements Objects {
             hurtTimer.start();
             HurtAnimation hurtAnimation = new HurtAnimation(this);
             hurtAnimation.start();
+            HurtMusic hurtMusic = new HurtMusic();
+            hurtMusic.start();
         }
     }
 
@@ -275,6 +289,8 @@ public class Player implements Objects {
             starTimer.start();
             StarAnimation starAnimation = new StarAnimation();
             starAnimation.start();
+            StarMusic starMusic = new StarMusic();
+            starMusic.start();
         }
     }
 
@@ -285,8 +301,7 @@ public class Player implements Objects {
         return horizontalCollision && verticalCollision;
     }
 
-    public void doProjectileCollision(ArrayList<ShellProjectile> shells, ArrayList<Player> players)
-    {
+    public void doProjectileCollision(ArrayList<ShellProjectile> shells, ArrayList<Player> players) throws UnsupportedAudioFileException, LineUnavailableException, IOException {
         for (Player player : players)
         {
             for (ShellProjectile shell : shells)
@@ -299,19 +314,23 @@ public class Player implements Objects {
                     hurtTimer.start();
                     HurtAnimation hurtAnimation = new HurtAnimation(player);
                     hurtAnimation.start();
+                    HurtMusic hurtMusic = new HurtMusic();
+                    hurtMusic.start();
                 }
             }
         }
     }
 
 
-    public void shootShell() throws IOException {
+    public void shootShell() throws IOException, UnsupportedAudioFileException, LineUnavailableException {
         if(shellUp)
         {
             shellProjectiles.add(new ShellProjectile(x, y));
             shellUp = true;
             shooting = true;
             shellProjectiles.get(0).new ShellAnimation().start();
+            ShellMusic shellMusic = new ShellMusic();
+            shellMusic.start();
             shellUp = false;
         }
     }
@@ -583,14 +602,8 @@ public class Player implements Objects {
         }
 
         @Override
-        public String returnStatus()
+        public void returnStatus()
         {
-            if(starUp)
-                return "star";
-            else if (hurt)
-                return "hurt";
-            else
-                return "normal";
         }
 
         @Override
@@ -641,6 +654,60 @@ public class Player implements Objects {
                 if(!Player.this.shellProjectiles.isEmpty())
                     shellProjectiles.remove(ShellProjectile.this);
             }
+        }
+    }
+
+    private class StarMusic extends Thread
+    {
+        File file;
+        AudioInputStream audioStream;
+        Clip clip;
+        private StarMusic() throws LineUnavailableException, UnsupportedAudioFileException, IOException {
+            file = new File("Music/STAR.wav");
+            audioStream = AudioSystem.getAudioInputStream(file);
+            clip = AudioSystem.getClip();
+            clip.open(audioStream);
+        }
+        @Override
+        public void run()
+        {
+            clip.start();
+        }
+    }
+
+    private class HurtMusic extends Thread
+    {
+        File file;
+        AudioInputStream audioStream;
+        Clip clip;
+        private HurtMusic() throws LineUnavailableException, UnsupportedAudioFileException, IOException {
+            file = new File("Music/HURT.wav");
+            audioStream = AudioSystem.getAudioInputStream(file);
+            clip = AudioSystem.getClip();
+            clip.open(audioStream);
+        }
+        @Override
+        public void run()
+        {
+            clip.start();
+        }
+    }
+
+    private class ShellMusic extends Thread
+    {
+        File file;
+        AudioInputStream audioStream;
+        Clip clip;
+        private ShellMusic() throws LineUnavailableException, UnsupportedAudioFileException, IOException {
+            file = new File("Music/KICK.wav");
+            audioStream = AudioSystem.getAudioInputStream(file);
+            clip = AudioSystem.getClip();
+            clip.open(audioStream);
+        }
+        @Override
+        public void run()
+        {
+            clip.start();
         }
     }
 
@@ -697,8 +764,8 @@ public class Player implements Objects {
         }
 
         @Override
-        public String returnStatus() {
-            return null;
+        public void returnStatus() {
+
         }
 
         @Override
@@ -773,8 +840,7 @@ public class Player implements Objects {
         }
 
         @Override
-        public String returnStatus() {
-            return null;
+        public void returnStatus() {
         }
 
         @Override
@@ -851,8 +917,7 @@ public class Player implements Objects {
         }
 
         @Override
-        public String returnStatus() {
-            return null;
+        public void returnStatus() {
         }
 
         @Override

@@ -72,7 +72,10 @@ public class GameCanvas extends JComponent {
         player = new SongPlayer();
         addBlocks();
         addEnemies();
+        stars.add(new Star(200,200));
         player.play(player.BG);
+        StatusMusic statusMusic = new StatusMusic();
+        statusMusic.start();
     }
 
     public void addPlayers(ArrayList<Player> p) {
@@ -460,8 +463,9 @@ public class GameCanvas extends JComponent {
         }
 
         @Override
-        public String returnStatus() {
-            return null;
+        public void returnStatus()
+        {
+
         }
 
         @Override
@@ -520,11 +524,7 @@ public class GameCanvas extends JComponent {
                 player.stop();
                 try {
                     player.play(player.CLEAR);
-                } catch (LineUnavailableException ex) {
-                    throw new RuntimeException(ex);
-                } catch (IOException ex) {
-                    throw new RuntimeException(ex);
-                } catch (UnsupportedAudioFileException ex) {
+                } catch (LineUnavailableException | UnsupportedAudioFileException | IOException ex) {
                     throw new RuntimeException(ex);
                 }
                 ongoing=false;
@@ -537,47 +537,57 @@ public class GameCanvas extends JComponent {
         }
     });
 
-    /*public void statusMusic()
+    public class StatusMusic extends Thread
     {
-        Timer statusTimer = new Timer(20, new ActionListener()
+        @Override
+        public void run()
         {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                for(Player players : players)
-                {
-                    if (players.returnStatus().equals("star"))
+            Timer statusTimer = new Timer(1000, new ActionListener()
+            {
+                boolean stopped = false;
+                @Override
+                public void actionPerformed(ActionEvent e) {
+
+                    if(players.get(0).starUp || players.get(1).starUp)
+                        {
+                            {
+                                player.stop();
+                                stopped = true;
+                            }
+                        }
+
+                    /*if (players.hurt)
                     {
                         try {
-                            playStarMusic();
-                        } catch (UnsupportedAudioFileException ex) {
-                            throw new RuntimeException(ex);
-                        } catch (LineUnavailableException ex) {
-                            throw new RuntimeException(ex);
-                        } catch (IOException ex) {
+                            if(!currentPlay)
+                            {
+                                player.sneakyPlay(player.HURT);
+                                currentPlay = true;
+                            }
+                        } catch (LineUnavailableException | IOException | UnsupportedAudioFileException ex) {
                             throw new RuntimeException(ex);
                         }
                     }
 
-                    else if (players.returnStatus().equals("hurt"))
-                    {
-                        break;
-                    }
+                     */
 
-                    else if (players.returnStatus().equals("normal"))
+                    else
                     {
-                        break;
+                        if (player.status.equals("STOP"))
+                        try {
+                            player.play(player.BG);
+                        } catch (LineUnavailableException ex) {
+                            throw new RuntimeException(ex);
+                        } catch (IOException ex) {
+                            throw new RuntimeException(ex);
+                        } catch (UnsupportedAudioFileException ex) {
+                            throw new RuntimeException(ex);
+                        }
                     }
                 }
-            }
-        });
-        statusTimer.start();
-
+            });
+            statusTimer.start();
+        }
     }
 
-     */
-    public void playStarMusic() throws UnsupportedAudioFileException, LineUnavailableException, IOException
-    {
-        player.stop();
-        player.play(player.STAR);
-    }
 }

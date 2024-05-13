@@ -7,7 +7,7 @@ public interface Objects
     void adjustY();
     int returnX();
     int returnY();
-    String returnStatus();
+    void returnStatus();
     void changeStatus();
     String returnDirection();
     void changeDirection(String direction);
