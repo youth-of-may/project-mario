@@ -33,6 +33,7 @@ public class GameCanvas extends JComponent {
     String coinLocation;
     String[] coinCoordinates;
     int length;
+    int playerID, delay;
 
 
 
@@ -81,6 +82,8 @@ public class GameCanvas extends JComponent {
         coinLocation = "";
         coinCoordinates = new String[20];
         length = 0;
+        playerID = 1;
+        delay = 10000;
         
     }
     public void updateTimeLeft(int t) {
@@ -111,9 +114,21 @@ public class GameCanvas extends JComponent {
     public ArrayList<SilverCoin> returnSC (){
         return sc;
     }
+    public void modifySC(ArrayList<SilverCoin> s) {
+        sc = s;
+    }
     public void startCountdown () {
         countdownTimer.start();
         
+    }
+    public void updateDelay(int d) {
+        System.out.println("Update delay");
+        if (d == 7000) {
+            delay = 7000;
+        }
+        else {
+            delay = 10000;
+        }
     }
     @Override
     public void paintComponent(Graphics g) {
@@ -366,16 +381,17 @@ public class GameCanvas extends JComponent {
                     repaint();
                 }
             });
-            Timer coinTimer = new Timer(15000, new ActionListener() {
+            
+            Timer coinTimer = new Timer(12000, new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     sc.clear();
-                    generateCoins();
+                    //generateCoins();
                     repaint();
                 }
             });
             powerUpTimer.start();
-            coinTimer.start();
+            //coinTimer.start();
         }
 
         public void generatePower() {
@@ -418,8 +434,6 @@ public class GameCanvas extends JComponent {
         public void generateCoins() {
             try {
                 if (length ==20) {
-
-               
                 for (int i = 0; i < 19; i+=2) {
                 if (Integer.parseInt(coinCoordinates[i]) != -1) 
                 {

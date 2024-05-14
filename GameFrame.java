@@ -5,6 +5,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.DataInputStream;
@@ -32,6 +33,7 @@ public class GameFrame implements KeyListener {
     private WriteToServer wts;
     private String coinLocation;
     private int timeLeft;
+    String[] coinCoordinates;
     
     
 
@@ -58,6 +60,7 @@ public class GameFrame implements KeyListener {
         sc = new ArrayList<>();
         coinLocation = "";
         timeLeft = 1000;
+        coinCoordinates = new String[20];
         
         /*
         player1 = canvas.getPlayer(0);
@@ -85,7 +88,7 @@ public class GameFrame implements KeyListener {
         System.out.println("Players created");
 
         enemies = canvas.returnEnemy();
-        sc = canvas.returnSC();
+        //sc = canvas.returnSC();
         
 
         //setUpCoins();
@@ -110,10 +113,11 @@ public class GameFrame implements KeyListener {
             DataInputStream in = new DataInputStream(bis);
             BufferedOutputStream bos = new BufferedOutputStream(socket.getOutputStream());
             DataOutputStream out = new DataOutputStream(bos);
-            
+
             //DataInputStream in = new DataInputStream(socket.getInputStream());
             //DataOutputStream out = new DataOutputStream(socket.getOutputStream());
             playerID = in.readInt(); //tells you if you're the first one to connect or what
+            
             System.out.println("You are player#" + playerID);
 
             createSprites();
@@ -130,12 +134,71 @@ public class GameFrame implements KeyListener {
 
         }
     }
+    public void generateCoins() {
+        try {
+           
+            if (coinCoordinates.length ==20) { 
+                coinCoordinates = coinLocation.split(",");
+               for (int i = 0; i < 19; i+=2) {
+            if (Integer.parseInt(coinCoordinates[i]) != -1) 
+            {
+            SilverCoin coin = new SilverCoin(Integer.parseInt(coinCoordinates[i]), Integer.parseInt(coinCoordinates[i+1]));
+            sc.add(coin);  
+            }
+            
+        }
+        
+        }
+        canvas.modifySC(sc);
+        }
+        catch(IOException e) {
+            System.out.println("IOException in generateCoins()");
+        }
+    }
+    
+    Timer coinTimer = new Timer(11000, new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            
+            generateCoins();
+            
+        }
+    });
+    Timer coinTimerClear = new Timer(24000, new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            sc.clear();
+            //generateCoins();
+            canvas.repaint();
+        }
+    });
+    public void checkCollisions() throws UnsupportedAudioFileException, LineUnavailableException, IOException {
+        for (Player player : players) {
+             Iterator<SilverCoin> iterator1 = sc.iterator();
+            while (iterator1.hasNext()) {
+                SilverCoin coin = iterator1.next();
+                if (player.scCollision(coin)) {
+                    player.doSCCollision(coin);
+                    player.addCoins();
+                    iterator1.remove();
+                }
+            }
+        }
+       
+
+    }
 
     public void setGUI() throws IOException, FontFormatException, UnsupportedAudioFileException, LineUnavailableException{
         
         connectToServer();
-        
-        
+        /*if (playerID == 1) {
+            canvas.updateDelay(10000);
+        }
+        else {
+            canvas.updateDelay(7000);
+        }*/
+        coinTimer.start();
+        coinTimerClear.start();
         
         canvas.addPlayers(players);
         frame.setTitle("Final Project - Giron - Olegario");
@@ -188,6 +251,7 @@ public class GameFrame implements KeyListener {
                     }
                     else
                     {
+                        checkCollisions();
                         canvas.checkCollisions();
                         canvas.repaint();
                         //updatePowerups then change icons
@@ -304,8 +368,10 @@ public class GameFrame implements KeyListener {
                     
                     
                         coinLocation = dataIn.readUTF();
+                       
                         //System.out.println(coinLocation);
-                        canvas.passCoinLocation(coinLocation);
+                        //canvas.passCoinLocation(coinLocation);
+                        //passCoinLocation(coinLocation);
                     //if (dataIn.readBoolean()) {}
                     int p2x = dataIn.readInt();
                     int p2y = dataIn.readInt();

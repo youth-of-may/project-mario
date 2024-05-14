@@ -24,9 +24,9 @@ public class GameServer {
   private WriteToClient p1WriteRunnable, p2WriteRunnable;
   private String coinLocation0, coinLocation1, coinLocation2, coinLocation3,coinLocation4, coinLocation5, coinLocation6, coinLocation7, coinLocation8, coinLocation9, coinLocation10, coinLocation11, coinLocation12;
   private String[] coinCollection;
-  //private ObjectGenerator obj; 
+  private ObjectGenerator obj; 
   private boolean ongoing;
-  private RandomGenerator rand = new RandomGenerator();
+  //private RandomGenerator rand = new RandomGenerator();
 
   //here
   //private ExecutorService readThreadPool;
@@ -47,7 +47,8 @@ public class GameServer {
 
         timeLeft = 200;
         counter = 0;
-        ongoing = timeLeft !=0;
+        ongoing = true;
+        obj = new ObjectGenerator();
         
 /* 
         coinLocation0 = "575,194,267,396,283,362,86,428,200,142,86,149,52,122,271,60,188,69,79,201";
@@ -64,7 +65,7 @@ public class GameServer {
         coinLocation11 = "385,110,198,349,451,321,680,447,211,140,275,254,111,401,331,221,509,306,536,194";
         coinLocation12 = "59,120,536,194,424,404,444,441,405,295,498,130,358,310,75,87,434,322,321,159";
 */
-        coinCollection = new String[] {"575,194,267,396,283,362,86,428,200,142,86,149,52,122,271,60,188,69,79,201", "268,256,572,395,64,246,402,93,635,376,332,358,389,261,604,204,517,337,521,76", "664,59,536,332,566,243,253,347,615,434,127,438,428,129,233,139,59,320,129,73", "108,154,393,79,421,242,120,69,141,211,68,116,219,101,482,259,617,245,289,250", "451,200,544,211,356,236,601,192,577,247,60,149,537,313,591,360,134,320,620,369", "380,99,563,276,382,158,242,364,522,130,347,215,617,240,266,432,165,218,311,143", "417,115,539,378,545,132,569,314,262,351,131,66,463,307,57,219,257,395,575,194", "300,187,354,90,383,134,275,323,322,292,249,68,488,280,392,178,537,228,680,190", "173,327,455,325,628,276,331,132,389,301,523,157,620,201,376,396,201,340,78,279", "591,80,446,267,565,180,422,111,256,54,273,431,430,234,568,375,441,337,597,429", "437,158,240,198,82,434,437,82,355,147,144,203,557,401,516,197,695,131,132,434", "385,110,198,349,451,321,680,447,211,140,275,254,111,401,331,221,509,306,536,194", "59,120,536,194,424,404,444,441,405,295,498,130,358,310,75,87,434,322,321,159"};
+        coinCollection = new String[] {"575,194,267,396,283,362,86,428,200,142,86,149,52,122,271,60,188,69,79,201", "268,256,572,395,64,246,402,93,635,376,332,358,389,261,604,204,517,337,521,76", "664,59,536,332,566,243,253,347,615,434,127,438,428,129,233,139,59,320,129,73", "108,154,393,79,421,242,120,69,141,211,68,116,219,101,482,259,617,245,289,250", "451,200,544,211,356,236,601,192,577,247,60,149,537,313,591,360,134,320,620,369", "380,99,563,276,382,158,242,364,522,130,347,215,617,240,266,432,165,218,311,143", "417,115,539,378,545,132,569,314,262,351,131,66,463,307,57,219,257,395,575,194", "300,187,354,90,383,134,275,323,322,292,249,68,488,280,392,178,537,228,680,190", "173,327,455,325,628,276,331,132,389,301,523,157,620,201,376,396,201,340,78,279", "591,80,446,267,565,180,422,111,256,54,273,431,430,234,568,375,441,337,597,429", "437,158,240,198,82,434,437,82,355,147,144,203,557,401,516,197,695,131,132,434", "385,110,198,349,451,321,680,447,211,140,275,254,111,401,331,221,509,306,536,194", "59,120,536,194,424,404,444,441,405,295,498,130,358,310,75,87,434,322,321,159", "385,110,198,349,451,321,680,447,211,140,275,254,111,401,331,221,509,306,536,194"};
         
         //readThreadPool = Executors.newFixedThreadPool(maxPlayers);
         //writeThreadPool = Executors.newFixedThreadPool(maxPlayers);
@@ -140,7 +141,8 @@ public void acceptConnections() {
               Thread writeThread2 = new Thread(p2WriteRunnable);
               writeThread1.start();
               writeThread2.start();
-              rand.start();
+              //rand.start();
+              obj.start();
           }
       }
       System.out.println("No longer accepting connections");
@@ -164,7 +166,7 @@ public void resetCoinLocation() {
         coinCollection[11] = coinLocation11;
         coinCollection[12] = coinLocation12;
 }
-/*
+
 public class ObjectGenerator extends Thread {
     //private Timer powerUpTimer;
     private Timer coinTimer;
@@ -182,7 +184,8 @@ public class ObjectGenerator extends Thread {
         coinTimer.start();
     }
 
-} */
+} 
+/* 
 public class RandomGenerator extends Thread {
         //private Timer powerUpTimer;
         private Timer randomTimer;
@@ -199,14 +202,16 @@ public class RandomGenerator extends Thread {
             randomTimer.start();
         }
 
-    }
+    }*/
 Timer countdownTimer = new Timer(1000, new ActionListener() {
     @Override
     public void actionPerformed(ActionEvent e) {
         timeLeft--;
+        
         //System.out.println(timeLeft);
         if (timeLeft<= 0) {
             countdownTimer.stop();
+            ongoing = false;
         }
         
     }
@@ -273,7 +278,7 @@ public void checkCollisions() {
 Timer collisionTimer = new Timer(10, new ActionListener() {
     @Override
     public void actionPerformed(ActionEvent e) {
-        checkCollisions();
+        //checkCollisions();
         //resetCoinLocation();
         
     }
@@ -404,7 +409,7 @@ private class WriteToClient implements Runnable {
           try {
               dataOut.writeUTF("We now have two players");
               countdownTimer.start();
-              collisionTimer.start();
+              //collisionTimer.start();
 
               //obj = new ObjectGenerator();
               //obj.start();
