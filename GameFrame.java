@@ -110,6 +110,7 @@ public class GameFrame implements KeyListener {
             DataInputStream in = new DataInputStream(bis);
             BufferedOutputStream bos = new BufferedOutputStream(socket.getOutputStream());
             DataOutputStream out = new DataOutputStream(bos);
+            
             //DataInputStream in = new DataInputStream(socket.getInputStream());
             //DataOutputStream out = new DataOutputStream(socket.getOutputStream());
             playerID = in.readInt(); //tells you if you're the first one to connect or what
