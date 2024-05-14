@@ -72,12 +72,9 @@ public class GameServer {
         coinCollection[11] = coinLocation11;
         coinCollection[12] = coinLocation12;
 
-        obj = new ObjectGenerator();
-        //obj.start();
+        
 
-        //random generator
-        RandomGenerator rand = new RandomGenerator();
-        rand.start();
+        
         
         
         // CopyOnWriteArrayList
@@ -134,6 +131,21 @@ public void acceptConnections() {
       System.out.println("IOexception from acceptConnections");
   }
 }
+public void resetCoinLocation() {
+        coinCollection[0] = coinLocation0;
+        coinCollection[1] = coinLocation1;
+        coinCollection[2] = coinLocation2;
+        coinCollection[3] = coinLocation3;
+        coinCollection[4] = coinLocation4;
+        coinCollection[5] = coinLocation5;
+        coinCollection[6] = coinLocation6;
+        coinCollection[7] = coinLocation7;
+        coinCollection[8] = coinLocation8;
+        coinCollection[9] = coinLocation9;
+        coinCollection[10] = coinLocation10;
+        coinCollection[11] = coinLocation11;
+        coinCollection[12] = coinLocation12;
+}
 
 public class ObjectGenerator extends Thread {
     //private Timer powerUpTimer;
@@ -158,13 +170,14 @@ public class RandomGenerator extends Thread {
         private Timer randomTimer;
 
         public void run() {
-            Timer randomTimer = new Timer(14000, new ActionListener() {
+            Timer randomTimer = new Timer(14980, new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     Random rn = new Random() ;
                     counter = rn.nextInt(12);
                 }
             });
+            
             randomTimer.start();
         }
 
@@ -208,6 +221,8 @@ public void checkCollisions() {
 
     }
     coinCollection[counter] = String.join(",", temp);
+    System.out.println(coinCollection[counter]);
+    
     /* 
     for (int i = 0; i < 19; i+=2) {
         if (Integer.parseInt(temp[i])==p1X && Integer.parseInt(temp[i+1])==p1Y) {
@@ -241,6 +256,7 @@ Timer collisionTimer = new Timer(10, new ActionListener() {
     @Override
     public void actionPerformed(ActionEvent e) {
         checkCollisions();
+        //resetCoinLocation();
         
     }
 });
@@ -264,12 +280,12 @@ private class ReadFromClient implements Runnable{
             if (playerID == 1) {
               p1X = dataIn.readInt();
               p1Y = dataIn.readInt();
-              p1Coins = dataIn.readInt();
+              //p1Coins = dataIn.readInt();
               //System.out.println("P1's coins are " + p1Coins);
       }  else {
           p2X = dataIn.readInt();
           p2Y = dataIn.readInt();
-          p2Coins = dataIn.readInt();
+          //p2Coins = dataIn.readInt();
           //System.out.println("P2's coins are " + p2Coins);
           
       }
@@ -283,6 +299,14 @@ private class ReadFromClient implements Runnable{
       }
       
   }
+}
+public class InformationThread extends Thread {
+    public InformationThread() {
+
+    }
+    public void run() {
+        
+    }
 }
 private class WriteToClient implements Runnable {
   private int playerID;
@@ -316,6 +340,14 @@ private class WriteToClient implements Runnable {
                 dataOut.writeBoolean(counter !=-1);
                 if (counter !=-1) {
                     dataOut.writeUTF(coinCollection[counter]);
+                    /*
+                    try {
+                        Thread.sleep(3000);
+
+                    }
+                    catch(InterruptedException e) {
+                        System.out.println("Interrupted exception in Thread.sleep");
+                    } */
                 }
                 
                   dataOut.writeInt(p2X);
@@ -363,6 +395,13 @@ private class WriteToClient implements Runnable {
               dataOut.writeUTF("We now have two players");
               countdownTimer.start();
               collisionTimer.start();
+
+              obj = new ObjectGenerator();
+              obj.start();
+              //obj.start();
+              //random generator
+        RandomGenerator rand = new RandomGenerator();
+        //rand.start();
           }
           catch(IOException e) {
               System.out.println("IOexception from sendStartMSg");

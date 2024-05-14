@@ -473,7 +473,7 @@ public class Player implements Objects {
     public void doSCCollision(SilverCoin other)
     {
         if (scCollision(other)) {
-            coins += 1;
+            //coins += 1;
         }
     }
 

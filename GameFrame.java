@@ -86,17 +86,18 @@ public class GameFrame implements KeyListener {
         sc = canvas.returnSC();
         
 
-        setUpCoins();
+        //setUpCoins();
         
     }
+    /*
     private void setUpCoins() {
         /*
          * This is for setting up the coins
-         */
-        coin1 = new JLabel("Coins: " + player1.coins);
+         
+        coin1 = new JLabel("Coins: " + String.valueOf(height)player1.returnCoins());
         coin2 = new JLabel("Coins: " + player2.coins);
     }
-
+ */
     private void connectToServer() throws IOException, FontFormatException, UnsupportedAudioFileException, LineUnavailableException{
         /*
          * Connecting to server
@@ -144,12 +145,12 @@ public class GameFrame implements KeyListener {
         frame.setVisible(true);
         canvas.requestFocusInWindow();
     }
-
+/*
     private void updateCoinLabel()
     {
         coin1.setText("Coins: " + player1.returnCoins());
         coin2.setText("Coins: " + player2.returnCoins());
-    }
+    } */
     /* 
     public void resetPowerUps() {
         Timer starTimer = new Timer(500, new ActionListener() {
@@ -186,7 +187,7 @@ public class GameFrame implements KeyListener {
                         canvas.players.get(0).changeIcons();
                         canvas.players.get(1).changeIcons();
                         //canvas.updateCoins(playerID);
-                        updateCoinLabel();
+                        //updateCoinLabel();
                     }
                 } catch (UnsupportedAudioFileException ex) {
                     throw new RuntimeException(ex);
@@ -219,44 +220,44 @@ public class GameFrame implements KeyListener {
             player1.changeDirection("up");
             player1.adjustY();
             canvas.repaint();
-            updateCoinLabel();
+            //updateCoinLabel();
         } else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
             player1.changeDirection("down");
             player1.adjustY();
             canvas.repaint();
-            updateCoinLabel();
+            //updateCoinLabel();
         } else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
             player1.changeDirection("right");
             player1.adjustX();
             canvas.repaint();
-            updateCoinLabel();
+            //updateCoinLabel();
         } else if (e.getKeyCode() == KeyEvent.VK_LEFT) {
             player1.changeDirection("left");
             player1.adjustX();
             canvas.repaint();
-            updateCoinLabel();
+            //updateCoinLabel();
         }
         else if (e.getKeyCode() == KeyEvent.VK_A) {
             player2.changeDirection("left");
             player2.adjustX();
             canvas.repaint();
-            updateCoinLabel();
+            //updateCoinLabel();
         }
         else if (e.getKeyCode() == KeyEvent.VK_S) {
             player2.changeDirection("down");
             player2.adjustY();
             canvas.repaint();
-            updateCoinLabel();
+            //updateCoinLabel();
         } else if (e.getKeyCode() == KeyEvent.VK_D) {
             player2.changeDirection("right");
             player2.adjustX();
             canvas.repaint();
-            updateCoinLabel();
+            //updateCoinLabel();
         } else if (e.getKeyCode() == KeyEvent.VK_W) {
             player2.changeDirection("up");
             player2.adjustY();
             canvas.repaint();
-            updateCoinLabel();
+            //updateCoinLabel();
         }
         else if (e.getKeyCode() == KeyEvent.VK_SPACE) {
             try {
@@ -269,7 +270,7 @@ public class GameFrame implements KeyListener {
                 throw new RuntimeException(ex);
             }
             canvas.repaint();
-            updateCoinLabel();
+            //updateCoinLabel();
         }
     }
 
@@ -295,7 +296,9 @@ public class GameFrame implements KeyListener {
                     }
                     
                     if (dataIn.readBoolean()) {
+                        
                         coinLocation = dataIn.readUTF();
+                        System.out.println(coinLocation);
                         canvas.passCoinLocation(coinLocation);
                     }
                     int p2x = dataIn.readInt();
@@ -303,11 +306,17 @@ public class GameFrame implements KeyListener {
                     //System.out.println(p2x);
                     player2.setX(p2x);
                     player2.setY(p2y);
-                    
                     //update coins 
+                    
                     player1.updateCoins(dataIn.readInt());
                     player2.updateCoins(dataIn.readInt());
-                    System.out.println(player1.returnCoins());
+                    canvas.updateCoins(player1.returnCoins(), player2.returnCoins());
+                    
+                    
+                    
+                    
+                    
+                    //System.out.println(player1.returnCoins());
 
                     //player2.updateCoins(dataIn.readInt());
                     
@@ -359,7 +368,7 @@ public class GameFrame implements KeyListener {
                     
                     dataOut.writeInt(player1.returnX());
                     dataOut.writeInt(player1.returnY());
-                    dataOut.writeInt(player1.returnCoins());
+                    //dataOut.writeInt(player1.returnCoins());
                     dataOut.flush();
                 }
                 try {

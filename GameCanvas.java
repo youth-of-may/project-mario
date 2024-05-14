@@ -320,15 +320,9 @@ public class GameCanvas extends JComponent {
         enemies.add(new Enemy(570, 170, "left", false));
     }
 
-    public void updateCoins(int playerID) {
-        if (playerID== 1) {
-        count1.setText(String.valueOf(players.get(0).coins));
-        count2.setText(String.valueOf(players.get(1).coins));
-        }
-        else {
-        count2.setText(String.valueOf(players.get(0).coins));
-        count1.setText(String.valueOf(players.get(1).coins));
-        }
+    public void updateCoins(int p1, int p2) {
+        count1.setText(String.valueOf(p1));
+        count2.setText(String.valueOf(p2));
         
     }
 
