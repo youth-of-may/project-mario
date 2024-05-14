@@ -29,6 +29,7 @@ public class GameFrame implements KeyListener {
     private ReadFromServer rfs;
     private WriteToServer wts;
     private String coinLocation;
+    private int timeLeft;
     
     
 
@@ -54,6 +55,7 @@ public class GameFrame implements KeyListener {
         enemies = new ArrayList<>();
         sc = new ArrayList<>();
         coinLocation = "";
+        timeLeft = 1000;
         
         /*
         player1 = canvas.getPlayer(0);
@@ -183,7 +185,7 @@ public class GameFrame implements KeyListener {
                         //updatePowerups then change icons
                         canvas.players.get(0).changeIcons();
                         canvas.players.get(1).changeIcons();
-                        canvas.updateCoins(playerID);
+                        //canvas.updateCoins(playerID);
                         updateCoinLabel();
                     }
                 } catch (UnsupportedAudioFileException ex) {
@@ -284,7 +286,14 @@ public class GameFrame implements KeyListener {
         public void run() {
             try {
             while (true) {
+                
                 if (player2 != null) {
+                    if (dataIn.readBoolean()) {
+                        timeLeft = dataIn.readInt();
+                        canvas.updateTimeLeft(timeLeft);
+                        //System.out.println(timeLeft);
+                    }
+                    
                     if (dataIn.readBoolean()) {
                         coinLocation = dataIn.readUTF();
                         canvas.passCoinLocation(coinLocation);
@@ -294,6 +303,11 @@ public class GameFrame implements KeyListener {
                     //System.out.println(p2x);
                     player2.setX(p2x);
                     player2.setY(p2y);
+                    
+                    //update coins 
+                    player1.updateCoins(dataIn.readInt());
+                    player2.updateCoins(dataIn.readInt());
+                    System.out.println(player1.returnCoins());
 
                     //player2.updateCoins(dataIn.readInt());
                     
@@ -313,10 +327,11 @@ public class GameFrame implements KeyListener {
                     read.start();
                     Thread write = new Thread(wts);
                     write.start();
-                    canvas.startCountdown();
+                    canvas.updateTimeLeft(timeLeft);
+                    //canvas.startCountdown();
                     canvas.playMusic();
                     for (Enemy e : enemies) {
-                        e.startThreads();
+                        //e.startThreads();
                     }
                     
             }

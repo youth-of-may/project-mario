@@ -83,6 +83,11 @@ public class GameCanvas extends JComponent {
         length = 0;
         
     }
+    public void updateTimeLeft(int t) {
+        timeLeft = t;
+        //System.out.println("updated time to " + timeLeft);
+        countdown.setText(String.valueOf(timeLeft));
+    }
     public void passCoinLocation(String loc) {
         coinLocation = loc;
         coinCoordinates = coinLocation.split(",");
@@ -183,8 +188,8 @@ public class GameCanvas extends JComponent {
             while (iterator1.hasNext()) {
                 SilverCoin coin = iterator1.next();
                 if (player.scCollision(coin)) {
-                    //player.doSCCollision(coin);
-                    player.addCoins();
+                    player.doSCCollision(coin);
+                    //player.addCoins();
                     iterator1.remove();
                 }
             }
@@ -567,12 +572,13 @@ public class GameCanvas extends JComponent {
 
         return null;
     }
+    //update timeLeft
 
     Timer countdownTimer = new Timer(1000, new ActionListener()
     {
         @Override
         public void actionPerformed(ActionEvent e) {
-            timeLeft--;
+            //timeLeft--;
             countdown.setText(String.valueOf(timeLeft));
             if(timeLeft <= 0)
             {

@@ -30,7 +30,7 @@ public class Player implements Objects {
         height = 40;
         imageX = 0;
         imageY = 0;
-        coins = 100;
+        coins = 0;
         sleep = false;
         sleepUp = false;
         starUp = false;
@@ -271,7 +271,8 @@ public class Player implements Objects {
     public void doEnemyCollision(Enemy other) throws UnsupportedAudioFileException, LineUnavailableException, IOException {
         if (enemyCollision(other) && !hurt && !starUp)
         {
-            coins -= 1;
+            if (coins>0)
+                coins -= 1;
             hurt = true;
             HurtTimer hurtTimer = new HurtTimer(this);
             hurtTimer.start();
