@@ -57,6 +57,8 @@ public class GameCanvas extends JComponent {
         objectGenerator = new ObjectGenerator();
         objectGenerator.start();
         font = Font.createFont(Font.TRUETYPE_FONT, new File("Font/FOT-YurukaStd-UB.otf"));
+
+        /*
         count1 = new JLabel("0");
         count1.setFont(font.deriveFont(Font.PLAIN, 15f));
         count1.setBounds(130, 545, 200, 50);
@@ -64,13 +66,12 @@ public class GameCanvas extends JComponent {
         count2 = new JLabel("0");
         count2.setFont(font.deriveFont(Font.PLAIN, 15f));
         count2.setBounds(630, 545, 200, 50);
-        count2.setForeground(Color.WHITE);
+        count2.setForeground(Color.WHITE); */
         countdown = new JLabel(String.valueOf(timeLeft));
         countdown.setFont(font.deriveFont(Font.PLAIN, 20f));
         countdown.setBounds(400, 555, 200, 50);
         countdown.setForeground(Color.WHITE);
-        add(count1);
-        add(count2);
+        
         add(countdown);
         //countdownTimer.start();
         player = new SongPlayer();
@@ -334,13 +335,13 @@ public class GameCanvas extends JComponent {
         enemies.add(new Enemy(210, 430, "right", true));
         enemies.add(new Enemy(570, 170, "left", false));
     }
-
+/*
     public void updateCoins(int p1, int p2) {
         count1.setText(String.valueOf(p1));
         count2.setText(String.valueOf(p2));
         
     }
-
+ */
     public void printWinner(String name) throws IOException {
         String winner = name;
         if (winner.equals("mario")) {

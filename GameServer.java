@@ -176,7 +176,7 @@ public class ObjectGenerator extends Thread {
             @Override
             public void actionPerformed(ActionEvent e) {
                 counter++;
-                System.out.println(counter);
+                //System.out.println(counter);
                 
             }
         });
@@ -303,12 +303,12 @@ private class ReadFromClient implements Runnable{
             if (playerID == 1) {
               p1X = dataIn.readInt();
               p1Y = dataIn.readInt();
-              //p1Coins = dataIn.readInt();
+              p1Coins = dataIn.readInt();
               //System.out.println("P1's coins are " + p1Coins);
       }  else {
           p2X = dataIn.readInt();
           p2Y = dataIn.readInt();
-          //p2Coins = dataIn.readInt();
+          p2Coins = dataIn.readInt();
           //System.out.println("P2's coins are " + p2Coins);
           
       }

@@ -10,7 +10,9 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.File;
 import java.net.*;
+import javax.swing.*;
 
 public class GameFrame implements KeyListener {
 
@@ -34,6 +36,8 @@ public class GameFrame implements KeyListener {
     private String coinLocation;
     private int timeLeft;
     String[] coinCoordinates;
+    private JLabel count1, count2;
+    Font font;
     
     
 
@@ -61,6 +65,17 @@ public class GameFrame implements KeyListener {
         coinLocation = "";
         timeLeft = 1000;
         coinCoordinates = new String[20];
+        font = Font.createFont(Font.TRUETYPE_FONT, new File("Font/FOT-YurukaStd-UB.otf"));
+
+        count1 = new JLabel("0");
+        count1.setFont(font.deriveFont(Font.PLAIN, 15f));
+        count1.setBounds(130, 545, 200, 50);
+        count1.setForeground(Color.WHITE);
+        count2 = new JLabel("0");
+        count2.setFont(font.deriveFont(Font.PLAIN, 15f));
+        count2.setBounds(630, 545, 200, 50);
+        count2.setForeground(Color.WHITE);
+        
         
         /*
         player1 = canvas.getPlayer(0);
@@ -88,6 +103,7 @@ public class GameFrame implements KeyListener {
         System.out.println("Players created");
 
         enemies = canvas.returnEnemy();
+        
         //sc = canvas.returnSC();
         
 
@@ -103,6 +119,18 @@ public class GameFrame implements KeyListener {
         coin2 = new JLabel("Coins: " + player2.coins);
     }
  */
+private void updateCoins() {
+    if (playerID == 1) {
+    count1.setText(String.valueOf(player1.returnCoins()));
+    count2.setText(String.valueOf(player2.returnCoins()));
+    }
+    else {
+    count1.setText(String.valueOf(player2.returnCoins()));
+    count2.setText(String.valueOf(player1.returnCoins()));
+    }
+
+    
+}
     private void connectToServer() throws IOException, FontFormatException, UnsupportedAudioFileException, LineUnavailableException{
         /*
          * Connecting to server
@@ -164,7 +192,7 @@ public class GameFrame implements KeyListener {
             
         }
     });
-    Timer coinTimerClear = new Timer(24000, new ActionListener() {
+    Timer coinTimerClear = new Timer(21000, new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
             sc.clear();
@@ -180,6 +208,7 @@ public class GameFrame implements KeyListener {
                 if (player.scCollision(coin)) {
                     player.doSCCollision(coin);
                     player.addCoins();
+                    System.out.println(player.returnCoins());
                     iterator1.remove();
                 }
             }
@@ -207,6 +236,8 @@ public class GameFrame implements KeyListener {
         frame.setLayout(new BorderLayout());
         canvas.setPreferredSize(new Dimension(800, 600));
         canvas.addPlayers(players);
+        frame.add(count1);
+        frame.add(count2);
         canvas.setFocusable(true);
         canvas.addKeyListener(this);
         frame.add(canvas, BorderLayout.CENTER);
@@ -252,6 +283,7 @@ public class GameFrame implements KeyListener {
                     else
                     {
                         checkCollisions();
+                        updateCoins();
                         canvas.checkCollisions();
                         canvas.repaint();
                         //updatePowerups then change icons
@@ -360,7 +392,11 @@ public class GameFrame implements KeyListener {
             while (true) {
                 
                 if (player2 != null) {
+                    int p1coins, p2coins;
+                        p1coins = 0;
+                        p2coins = 0;
                     if (dataIn.readBoolean()) {
+                        
                         timeLeft = dataIn.readInt();
                         canvas.updateTimeLeft(timeLeft);
                         //System.out.println(timeLeft);
@@ -380,9 +416,10 @@ public class GameFrame implements KeyListener {
                     player2.setY(p2y);
                     //update coins 
                     
-                    player1.updateCoins(dataIn.readInt());
-                    player2.updateCoins(dataIn.readInt());
-                    canvas.updateCoins(player1.returnCoins(), player2.returnCoins());
+                    p1coins = dataIn.readInt();
+                   p2coins =dataIn.readInt();
+                    
+                    //canvas.updateCoins(player1.returnCoins(), player2.returnCoins());
                     
                     
                     
@@ -440,7 +477,7 @@ public class GameFrame implements KeyListener {
                     
                     dataOut.writeInt(player1.returnX());
                     dataOut.writeInt(player1.returnY());
-                    //dataOut.writeInt(player1.returnCoins());
+                    dataOut.writeInt(player1.returnCoins());
                     dataOut.flush();
                 }
                 try {
