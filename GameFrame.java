@@ -5,6 +5,8 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.net.*;
@@ -104,8 +106,12 @@ public class GameFrame implements KeyListener {
          */
         try {
             socket = new Socket("localhost", 55555);
-            DataInputStream in = new DataInputStream(socket.getInputStream());
-            DataOutputStream out = new DataOutputStream(socket.getOutputStream());
+            BufferedInputStream bis = new BufferedInputStream(socket.getInputStream());
+            DataInputStream in = new DataInputStream(bis);
+            BufferedOutputStream bos = new BufferedOutputStream(socket.getOutputStream());
+            DataOutputStream out = new DataOutputStream(bos);
+            //DataInputStream in = new DataInputStream(socket.getInputStream());
+            //DataOutputStream out = new DataOutputStream(socket.getOutputStream());
             playerID = in.readInt(); //tells you if you're the first one to connect or what
             System.out.println("You are player#" + playerID);
 
@@ -295,12 +301,11 @@ public class GameFrame implements KeyListener {
                         //System.out.println(timeLeft);
                     }
                     
-                    if (dataIn.readBoolean()) {
-                        
+                    
                         coinLocation = dataIn.readUTF();
-                        System.out.println(coinLocation);
+                        //System.out.println(coinLocation);
                         canvas.passCoinLocation(coinLocation);
-                    }
+                    //if (dataIn.readBoolean()) {}
                     int p2x = dataIn.readInt();
                     int p2y = dataIn.readInt();
                     //System.out.println(p2x);

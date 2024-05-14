@@ -1,6 +1,8 @@
 import java.io.*;
 import java.net.*;
 import java.util.Random;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.random.RandomGenerator;
 
 import javax.sound.sampled.LineUnavailableException;
@@ -22,8 +24,13 @@ public class GameServer {
   private WriteToClient p1WriteRunnable, p2WriteRunnable;
   private String coinLocation0, coinLocation1, coinLocation2, coinLocation3,coinLocation4, coinLocation5, coinLocation6, coinLocation7, coinLocation8, coinLocation9, coinLocation10, coinLocation11, coinLocation12;
   private String[] coinCollection;
-  private ObjectGenerator obj; 
+  //private ObjectGenerator obj; 
   private boolean ongoing;
+  private RandomGenerator rand = new RandomGenerator();
+
+  //here
+  //private ExecutorService readThreadPool;
+  //private ExecutorService writeThreadPool;
   
   public GameServer() {
     System.out.println("=== GAME SERVER ===");
@@ -39,10 +46,10 @@ public class GameServer {
         p2Coins = 0;
 
         timeLeft = 200;
-        counter = -1;
+        counter = 0;
         ongoing = timeLeft !=0;
         
-
+/* 
         coinLocation0 = "575,194,267,396,283,362,86,428,200,142,86,149,52,122,271,60,188,69,79,201";
         coinLocation1 = "268,256,572,395,64,246,402,93,635,376,332,358,389,261,604,204,517,337,521,76";
         coinLocation2 = "664,59,536,332,566,243,253,347,615,434,127,438,428,129,233,139,59,320,129,73";
@@ -56,8 +63,13 @@ public class GameServer {
         coinLocation10 = "437,158,240,198,82,434,437,82,355,147,144,203,557,401,516,197,695,131,132,434";
         coinLocation11 = "385,110,198,349,451,321,680,447,211,140,275,254,111,401,331,221,509,306,536,194";
         coinLocation12 = "59,120,536,194,424,404,444,441,405,295,498,130,358,310,75,87,434,322,321,159";
+*/
+        coinCollection = new String[] {"575,194,267,396,283,362,86,428,200,142,86,149,52,122,271,60,188,69,79,201", "268,256,572,395,64,246,402,93,635,376,332,358,389,261,604,204,517,337,521,76", "664,59,536,332,566,243,253,347,615,434,127,438,428,129,233,139,59,320,129,73", "108,154,393,79,421,242,120,69,141,211,68,116,219,101,482,259,617,245,289,250", "451,200,544,211,356,236,601,192,577,247,60,149,537,313,591,360,134,320,620,369", "380,99,563,276,382,158,242,364,522,130,347,215,617,240,266,432,165,218,311,143", "417,115,539,378,545,132,569,314,262,351,131,66,463,307,57,219,257,395,575,194", "300,187,354,90,383,134,275,323,322,292,249,68,488,280,392,178,537,228,680,190", "173,327,455,325,628,276,331,132,389,301,523,157,620,201,376,396,201,340,78,279", "591,80,446,267,565,180,422,111,256,54,273,431,430,234,568,375,441,337,597,429", "437,158,240,198,82,434,437,82,355,147,144,203,557,401,516,197,695,131,132,434", "385,110,198,349,451,321,680,447,211,140,275,254,111,401,331,221,509,306,536,194", "59,120,536,194,424,404,444,441,405,295,498,130,358,310,75,87,434,322,321,159"};
+        
+        //readThreadPool = Executors.newFixedThreadPool(maxPlayers);
+        //writeThreadPool = Executors.newFixedThreadPool(maxPlayers);
 
-        coinCollection = new String[13];
+        /*
         coinCollection[0] = coinLocation0;
         coinCollection[1] = coinLocation1;
         coinCollection[2] = coinLocation2;
@@ -73,7 +85,7 @@ public class GameServer {
         coinCollection[12] = coinLocation12;
 
         
-
+ */
         
         
         
@@ -93,13 +105,18 @@ public void acceptConnections() {
       System.out.println("Waiting for connections...");
       while (numPlayers< maxPlayers) {
           Socket s = ss.accept();
-          DataInputStream in = new DataInputStream(s.getInputStream());
-          DataOutputStream out = new DataOutputStream(s.getOutputStream());
+          BufferedInputStream bis = new BufferedInputStream(s.getInputStream());
+          DataInputStream in = new DataInputStream(bis);
+          BufferedOutputStream bos = new BufferedOutputStream(s.getOutputStream());
+          DataOutputStream out = new DataOutputStream(bos);
           numPlayers++;
           out.writeInt(numPlayers); //for sending the playerID
           System.out.println("Player #" + numPlayers +  " has connected.");
           ReadFromClient rfc= new ReadFromClient(numPlayers, in);
           WriteToClient wtc = new WriteToClient(numPlayers, out);
+
+          //readThreadPool.execute(rfc);
+          //writeThreadPool.execute(wtc);
 
           if (numPlayers == 1) {
               p1Socket =s ;
@@ -123,6 +140,7 @@ public void acceptConnections() {
               Thread writeThread2 = new Thread(p2WriteRunnable);
               writeThread1.start();
               writeThread2.start();
+              rand.start();
           }
       }
       System.out.println("No longer accepting connections");
@@ -146,7 +164,7 @@ public void resetCoinLocation() {
         coinCollection[11] = coinLocation11;
         coinCollection[12] = coinLocation12;
 }
-
+/*
 public class ObjectGenerator extends Thread {
     //private Timer powerUpTimer;
     private Timer coinTimer;
@@ -164,13 +182,13 @@ public class ObjectGenerator extends Thread {
         coinTimer.start();
     }
 
-}
+} */
 public class RandomGenerator extends Thread {
         //private Timer powerUpTimer;
         private Timer randomTimer;
 
         public void run() {
-            Timer randomTimer = new Timer(14980, new ActionListener() {
+            Timer randomTimer = new Timer(15000, new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     Random rn = new Random() ;
@@ -209,19 +227,19 @@ public void checkCollisions() {
             temp[i] = "-1";
             temp[i + 1] = "-1";
             p1Coins++;
-            System.out.println("Player 1 colliding");
+            //System.out.println("Player 1 colliding");
         
         }
         else if (horizontalCollisionPlayer2 && verticalCollisionPlayer2) {
             temp[i] = "-1";
             temp[i + 1] = "-1";
             p2Coins++;
-            System.out.println("Player 2 colliding");
+            //System.out.println("Player 2 colliding");
         }
 
     }
     coinCollection[counter] = String.join(",", temp);
-    System.out.println(coinCollection[counter]);
+    //System.out.println(coinCollection[counter]);
     
     /* 
     for (int i = 0; i < 19; i+=2) {
@@ -300,14 +318,6 @@ private class ReadFromClient implements Runnable{
       
   }
 }
-public class InformationThread extends Thread {
-    public InformationThread() {
-
-    }
-    public void run() {
-        
-    }
-}
 private class WriteToClient implements Runnable {
   private int playerID;
   private DataOutputStream dataOut;
@@ -335,11 +345,11 @@ private class WriteToClient implements Runnable {
             if (numPlayers ==maxPlayers) {
                 dataOut.writeInt(timeLeft);
             }
-           
+           dataOut.writeUTF(coinCollection[counter]);
               if (playerID == 1) {
-                dataOut.writeBoolean(counter !=-1);
-                if (counter !=-1) {
-                    dataOut.writeUTF(coinCollection[counter]);
+                //dataOut.writeBoolean(counter !=-1);
+                
+                    
                     /*
                     try {
                         Thread.sleep(3000);
@@ -348,7 +358,7 @@ private class WriteToClient implements Runnable {
                     catch(InterruptedException e) {
                         System.out.println("Interrupted exception in Thread.sleep");
                     } */
-                }
+               //if (counter !=-1) { }
                 
                   dataOut.writeInt(p2X);
                   dataOut.writeInt(p2Y);
@@ -366,10 +376,10 @@ private class WriteToClient implements Runnable {
               }
               else {
                 //Sending boolean?
-                dataOut.writeBoolean(counter !=-1);
-                if (counter !=-1) {
-                    dataOut.writeUTF(coinCollection[counter]);
-                }
+                //dataOut.writeBoolean(counter !=-1);
+               
+                    
+               // if (counter !=-1) { }
                   dataOut.writeInt(p1X);
                   dataOut.writeInt(p1Y);
                   dataOut.writeInt(p2Coins);
@@ -378,7 +388,7 @@ private class WriteToClient implements Runnable {
                   dataOut.flush();
               }
               try {
-                  Thread.sleep(25);
+                  Thread.sleep(50);
               }
               catch(InterruptedException e) {
                   System.out.println("Interrupted exception from WTC run");
@@ -396,11 +406,11 @@ private class WriteToClient implements Runnable {
               countdownTimer.start();
               collisionTimer.start();
 
-              obj = new ObjectGenerator();
-              obj.start();
+              //obj = new ObjectGenerator();
+              //obj.start();
               //obj.start();
               //random generator
-        RandomGenerator rand = new RandomGenerator();
+        //RandomGenerator rand = new RandomGenerator();
         //rand.start();
           }
           catch(IOException e) {
